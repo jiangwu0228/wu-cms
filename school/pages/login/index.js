@@ -1,8 +1,9 @@
+import React, { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+
 import styled from "styled-components";
-import React, { useState } from "react";
-import { Form, Input, Radio, Checkbox, Button} from "antd";
+import { Form, Input, Radio, Checkbox, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 
@@ -42,6 +43,7 @@ function Login() {
         <title>Login</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <Heading>Course Management Assistant</Heading>
 
       <FormWrap>
@@ -55,10 +57,10 @@ function Login() {
           onValuesChange={onFormLayoutChange}
         >
           <Form.Item name="layout">
-            <Radio.Group value={formLayout}>
-              <Radio.Button value="Student">Student</Radio.Button>
-              <Radio.Button value="Teacher">Teacher</Radio.Button>
-              <Radio.Button value="Manager">Manager</Radio.Button>
+            <Radio.Group value={formLayout} defaultValue={"student"}>
+              <Radio.Button value="student">Student</Radio.Button>
+              <Radio.Button value="teacher">Teacher</Radio.Button>
+              <Radio.Button value="manager">Manager</Radio.Button>
             </Radio.Group>
           </Form.Item>
 
@@ -107,7 +109,7 @@ function Login() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" style={{width: "100%"}}>
+            <Button type="primary" htmlType="submit" block>
               Log in
             </Button>
           </Form.Item>
