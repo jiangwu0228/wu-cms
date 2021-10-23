@@ -1,12 +1,14 @@
 import Head from "next/head";
+import Link from "next/link";
 import styled from "styled-components";
 import React, { useState } from "react";
-import { Form, Input, Button, Radio, Checkbox } from "antd";
+import { Form, Input, Radio, Checkbox, Button} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 
-const FormWarp = styled.div`
-  max-width: 30rem;
+const FormWrap = styled.div`
+  max-width: 30%;
+  min-width: 24rem;
   margin: auto;
 `;
 
@@ -34,23 +36,6 @@ function Login() {
         }
       : null;
 
-  const tailFormItemLayout = {
-    wrapperCol: {
-      span: 24,
-      offset: 0,
-    },
-  };
-
-  const buttonItemLayout =
-    formLayout === "horizontal"
-      ? {
-          wrapperCol: {
-            span: 24,
-            offset: 0,
-          },
-        }
-      : null;
-
   return (
     <>
       <Head>
@@ -58,7 +43,8 @@ function Login() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Heading>Course Management Assistant</Heading>
-      <FormWarp>
+
+      <FormWrap>
         <Form
           {...formItemLayout}
           layout={formLayout}
@@ -75,6 +61,7 @@ function Login() {
               <Radio.Button value="Manager">Manager</Radio.Button>
             </Radio.Group>
           </Form.Item>
+
           <Form.Item
             name="email"
             rules={[
@@ -90,15 +77,18 @@ function Login() {
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder="Username"
+              placeholder="Email"
             />
           </Form.Item>
+
           <Form.Item
             name="password"
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
+                message: "'password' must be between 4 and 16 characters",
+                min: 4,
+                max: 16,
               },
             ]}
             hasFeedback
@@ -109,31 +99,23 @@ function Login() {
               placeholder="Password"
             />
           </Form.Item>
-          <Form.Item
-            name="agreement"
-            valuePropName="checked"
-            rules={[
-              {
-                validator: (_, value) =>
-                  value
-                    ? Promise.resolve()
-                    : Promise.reject(new Error("Should accept agreement")),
-              },
-            ]}
-            {...tailFormItemLayout}
-          >
-            <Checkbox>
-              I have read the <a href="">agreement</a>
-            </Checkbox>
+
+          <Form.Item>
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>Remember me</Checkbox>
+            </Form.Item>
           </Form.Item>
-          <Form.Item {...buttonItemLayout}>
-            <Button type="primary">Submit</Button>
-          </Form.Item>
-          <Form.Item {...buttonItemLayout}>
-            No account? <a href="/SignUp"> Sign Up</a>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" style={{width: "100%"}}>
+              Log in
+            </Button>
           </Form.Item>
         </Form>
-      </FormWarp>
+        <span>
+          No account? <Link href="/signup">Sign Up</Link>
+        </span>
+      </FormWrap>
     </>
   );
 }
