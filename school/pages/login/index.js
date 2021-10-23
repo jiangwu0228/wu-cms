@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import styled from 'styled-components';
 
-const Hero = styled.div`
+const Main = styled.div`
   height: 90vh;
   display: flex;
   justify-content: center;
@@ -22,9 +22,9 @@ export default function Login() {
         <title>Login</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <Hero>
+      <Main>
         <Heading>Login works!</Heading>
-      </Hero>
+      </Main>
     </>
   );
 }
