@@ -34,7 +34,7 @@ My project
 
 https://github.com/kasituna/School_CMS/tree/master
 
-https://school-cms-sigma.vercel.app/
+https://school-cms-blond.vercel.app/
 
 
 
