@@ -74,3 +74,8 @@ login logic:
 Validate in local use antd, tickle the remember me box. If it's not ,set time out to logout, otherwise save it in local storage for maybe 7 days.
 
 Sent email and password and role to server via api in POST method. if get responses 'success', save token role and userId in local storage, and drive it to the page depends on role and use id get it's own data.
+
+
+
+
+
