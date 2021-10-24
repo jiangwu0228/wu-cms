@@ -51,6 +51,7 @@ function Login() {
           {...formItemLayout}
           layout={formLayout}
           form={form}
+          rules={[{required: true}]}
           initialValues={{
             layout: formLayout,
           }}
