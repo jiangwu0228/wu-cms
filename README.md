@@ -1,81 +1,34 @@
-# School_CMS
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Getting Started
 
+First, run the development server:
 
-### Set up
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-##### Project located in fold school_cms
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Framework : Next js
+You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-UI: antd
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-Style : styled-components
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-Api : axios
+## Learn More
 
-CMS api:
+To learn more about Next.js, take a look at the following resources:
 
-https://www.showdoc.com.cn/1162959773489609
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-https://cms.chtoma.com/swagger/
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-Sample :
+## Deploy on Vercel
 
-https://cms-lyart.vercel.app/   
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-username: [manager@admin.com](mailto:manager@admin.com)  password:111111
-
-https://github.com/chtocode/CMS /  Don’t copy this code
-
-
-
-My project
-
-https://github.com/kasituna/School_CMS/tree/master
-
-https://school-cms-blond.vercel.app/
-
-
-
-##### Each class document in fold "chapter"
-
-My note book located here
-
-###### Day one
-
-set up dev env
-
-build login page
-
-First of all we need **Design for structure**
-
-Router :
-
-[school_cms]
-├── [components]
-│  └── [layout]
-│     └──Footer.js
-│     └──Layout.js
-│     └──MainNavigation.js
-├── [pages]
-│  └── [dashboard]
-│     └──index.js //dashboard home page
-│  └── [login]
-│     └──index.js //login home page
-│  └── [signup]
-│     └──signup.js //login home page
-│  └── index.js //home page
-└── [styles]
-   └──globals.css
-
-login logic:
-
-Validate in local use antd, tickle the remember me box. If it's not ,set time out to logout, otherwise save it in local storage for maybe 7 days.
-
-Sent email and password and role to server via api in POST method. if get responses 'success', save token role and userId in local storage, and drive it to the page depends on role and use id get it's own data.
-
-
-
-
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
