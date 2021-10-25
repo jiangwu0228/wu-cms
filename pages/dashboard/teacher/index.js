@@ -19,10 +19,12 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Manager Dashboard</title>
+        <title>Teacher Dashboard</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div>manager</div>
+      <Main>
+        <Heading>Teacher Dashboard works!</Heading>
+      </Main>
     </>
   );
 }

@@ -1,11 +1,19 @@
-import Layout from '../components/layout/Layout';
-import '../styles/globals.css';
+import HomeLayout from "../components/layout/home/HomeLayout";
+import DashboardLayout from "../components/layout/dashboard/DashboardLayout";
+import "../styles/globals.css";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, router }) {
+  if (router.pathname.startsWith("/dashboard/")) {
+    return (
+      <DashboardLayout>
+        <Component {...pageProps} />
+      </DashboardLayout>
+    );
+  }
   return (
-    <Layout>
+    <HomeLayout>
       <Component {...pageProps} />
-    </Layout>
+    </HomeLayout>
   );
 }
 
