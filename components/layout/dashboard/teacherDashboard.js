@@ -19,6 +19,7 @@ import {
   FileAddOutlined,
   BellOutlined,
   DeploymentUnitOutlined,
+  ScheduleOutlined,
   EditOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
@@ -45,12 +46,12 @@ const HeaderRight = styled.div`
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const DashboardLayout = ({ children }) => {
+const TeacherDashboard = ({ children }) => {
   const { pathname } = useRouter();
   const manager = pathname.startsWith("/dashboard/manager");
   const student = pathname.startsWith("/dashboard/student");
   const teacher = pathname.startsWith("/dashboard/teacher");
-  console.log(student);
+  console.log(student)
   const [collapsed, toggleCollapse] = useState(false);
   const toggle = () => {
     toggleCollapse(!collapsed);
@@ -78,13 +79,17 @@ const DashboardLayout = ({ children }) => {
             Overview
           </Menu.Item>
 
+          <Menu.Item key="classSchedule" icon={<ScheduleOutlined />}>
+            Class Schedule
+          </Menu.Item>
+
           <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
             <Menu.Item key="Student List" icon={<TeamOutlined />}>
               Student List
             </Menu.Item>
           </SubMenu>
 
-          <SubMenu
+          {/* <SubMenu
             key="teacher"
             icon={<DeploymentUnitOutlined />}
             title="Teacher"
@@ -92,7 +97,7 @@ const DashboardLayout = ({ children }) => {
             <Menu.Item key="teacherList" icon={<TeamOutlined />}>
               Teacher List
             </Menu.Item>
-          </SubMenu>
+          </SubMenu> */}
 
           <SubMenu key="course" icon={<ReadOutlined />} title="Course">
             <Menu.Item key="allCourse" icon={<UnorderedListOutlined />}>
@@ -158,4 +163,4 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default TeacherDashboard;

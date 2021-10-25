@@ -12,12 +12,14 @@ import {
   MenuFoldOutlined,
   UserOutlined,
   DashboardOutlined,
+  ProjectOutlined,
   TeamOutlined,
   SolutionOutlined,
   ReadOutlined,
   MessageOutlined,
   FileAddOutlined,
   BellOutlined,
+  ScheduleOutlined,
   DeploymentUnitOutlined,
   EditOutlined,
   UnorderedListOutlined,
@@ -45,12 +47,12 @@ const HeaderRight = styled.div`
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const DashboardLayout = ({ children }) => {
+const StudentDashboard = ({ children }) => {
   const { pathname } = useRouter();
   const manager = pathname.startsWith("/dashboard/manager");
   const student = pathname.startsWith("/dashboard/student");
   const teacher = pathname.startsWith("/dashboard/teacher");
-  console.log(student);
+  console.log(student)
   const [collapsed, toggleCollapse] = useState(false);
   const toggle = () => {
     toggleCollapse(!collapsed);
@@ -78,13 +80,13 @@ const DashboardLayout = ({ children }) => {
             Overview
           </Menu.Item>
 
-          <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
+          {/* <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
             <Menu.Item key="Student List" icon={<TeamOutlined />}>
               Student List
             </Menu.Item>
-          </SubMenu>
+          </SubMenu> */}
 
-          <SubMenu
+          {/* <SubMenu
             key="teacher"
             icon={<DeploymentUnitOutlined />}
             title="Teacher"
@@ -92,21 +94,25 @@ const DashboardLayout = ({ children }) => {
             <Menu.Item key="teacherList" icon={<TeamOutlined />}>
               Teacher List
             </Menu.Item>
-          </SubMenu>
+          </SubMenu> */}
 
           <SubMenu key="course" icon={<ReadOutlined />} title="Course">
-            <Menu.Item key="allCourse" icon={<UnorderedListOutlined />}>
+            <Menu.Item key="allCourse" icon={<ProjectOutlined />}>
               All Course
             </Menu.Item>
 
             <Menu.Item key="addCourse" icon={<FileAddOutlined />}>
-              Add Course
+              My Course
             </Menu.Item>
 
-            <Menu.Item key="editCourse" icon={<EditOutlined />}>
+            {/* <Menu.Item key="editCourse" icon={<EditOutlined />}>
               Edit Course
-            </Menu.Item>
+            </Menu.Item> */}
           </SubMenu>
+
+          <Menu.Item key="classSchedule" icon={<ScheduleOutlined />}>
+            Class Schedule
+          </Menu.Item>
 
           <Menu.Item key="message" icon={<MessageOutlined />}>
             Message
@@ -158,4 +164,4 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default StudentDashboard;

@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 import styled from "styled-components";
 
@@ -22,6 +22,7 @@ import {
   EditOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
+import StudentList from "../../dashboard/sider/studentList";
 
 const Logo = styled.div`
   height: 64px;
@@ -45,11 +46,13 @@ const HeaderRight = styled.div`
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const DashboardLayout = ({ children }) => {
-  const { pathname } = useRouter();
+const ManagerDashboard = ({ children }) => {
+  const router = useRouter();
+  const { asPath, pathname } = useRouter();
   const manager = pathname.startsWith("/dashboard/manager");
   const student = pathname.startsWith("/dashboard/student");
   const teacher = pathname.startsWith("/dashboard/teacher");
+  const baseUrl = "/dashboard/manager/";
   console.log(student);
   const [collapsed, toggleCollapse] = useState(false);
   const toggle = () => {
@@ -79,10 +82,15 @@ const DashboardLayout = ({ children }) => {
           </Menu.Item>
 
           <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
-            <Menu.Item key="Student List" icon={<TeamOutlined />}>
+            <Menu.Item
+              key="studentList"
+              icon={<TeamOutlined />}
+              onClick={() => router.push(baseUrl + "students-list")}
+            >
               Student List
             </Menu.Item>
           </SubMenu>
+          {/* <StudentList/> */}
 
           <SubMenu
             key="teacher"
@@ -158,4 +166,4 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default ManagerDashboard;

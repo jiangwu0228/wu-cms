@@ -22,9 +22,7 @@ export default function Login() {
         <title>Login</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <Main>
-        <Heading>Dashboard works!</Heading>
-      </Main>
+    <div>teacher dashboard works!</div>
     </>
   );
 }

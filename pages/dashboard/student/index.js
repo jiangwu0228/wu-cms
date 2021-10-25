@@ -1,5 +1,5 @@
-import Head from 'next/head';
-import styled from 'styled-components';
+import Head from "next/head";
+import styled from "styled-components";
 
 const Main = styled.div`
   height: 90vh;
@@ -20,11 +20,9 @@ export default function Login() {
     <>
       <Head>
         <title>Student Dashboard</title>
-        <link rel='icon' href='/favicon.ico' />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Main>
-        <Heading>Student Dashboard Works!</Heading>
-      </Main>
+      <div>Student Dashboard Works!</div>
     </>
   );
 }
