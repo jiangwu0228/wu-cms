@@ -24,9 +24,7 @@ const StyledTitle = styled.h1`
   color: #000;
 `;
 
-const loginURL = "https://cms.chtoma.com/api/login";
-
-const Login = () =>  {
+const Login = () => {
   const [form] = Form.useForm();
   const router = useRouter();
   const Role = {
@@ -38,7 +36,7 @@ const Login = () =>  {
   const onFinish = (values) => {
     axios({
       method: "post",
-      url: loginURL,
+      url: "https://cms.chtoma.com/api/login",
       data: {
         email: values.email,
         password: AES.encrypt(values.password, "cms").toString(),
@@ -48,7 +46,7 @@ const Login = () =>  {
       .then(function (response) {
         if (response.status === 201) {
           if (values.remember === true) {
-            localStorage.setItem('myAuth', response.data.data.token);
+            localStorage.setItem("myAuth", response.data.data.token);
           }
           router.push(`/dashboard/${values.role}`);
         }
@@ -56,7 +54,7 @@ const Login = () =>  {
       .catch(function (error) {
         console.log(error);
       });
-  }
+  };
 
   return (
     <>
@@ -78,7 +76,7 @@ const Login = () =>  {
         >
           <Form.Item
             name="role"
-            initialValue={Role.manager}
+            initialValue={Role.student}
             rules={[{ required: true }]}
           >
             <Radio.Group>
@@ -139,6 +137,6 @@ const Login = () =>  {
       </FormWrap>
     </>
   );
-}
+};
 
 export default Login;

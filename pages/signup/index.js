@@ -1,6 +1,9 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/dist/client/router";
+
+import axios from "axios";
 
 import styled from "styled-components";
 import "antd/dist/antd.css";
@@ -20,23 +23,41 @@ const Heading = styled.h1`
   color: #000;
 `;
 
-const formItemLayout = {
-  wrapperCol: {
-    span: 24,
-  },
-};
-
 function SignUp() {
   const [form] = Form.useForm();
+  const router = useRouter();
+  const Role = {
+    student: "student",
+    teacher: "teacher",
+    manager: "manager",
+  };
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    axios({
+      method: "post",
+      url: "https://cms.chtoma.com/api/signup",
+      data: {
+        email: values.email,
+        password: values.password,
+        role: values.role,
+      },
+    })
+      .then(function (response) {
+        console.log(response.status)
+        if (response.status === 201) {
+          router.push("/login");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Sign Up</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -44,27 +65,21 @@ function SignUp() {
 
       <FormWrap>
         <Form
-          {...formItemLayout}
           layout="vertical"
           form={form}
           name="register"
           onFinish={onFinish}
-          initialValues={{
-            residence: ["zhejiang", "hangzhou", "xihu"],
-            prefix: "86",
-          }}
-          scrollToFirstError
         >
           <Form.Item
             name="role"
             label="Role"
+            initialValue={Role.student}
             rules={[{required: true}]}
           >
-            <Radio.Group name="radiogroup" defaultValue={'student'}>
+            <Radio.Group >
               <Radio value={'student'}>Student</Radio>
               <Radio value={'teacher'}>Teacher</Radio>
               <Radio value={'manager'}>Manager</Radio>
-
             </Radio.Group>
           </Form.Item>
 
@@ -83,7 +98,7 @@ function SignUp() {
             ]}
           >
             <Input
-              prefix={<UserOutlined className="site-form-item-icon" />}
+              prefix={<UserOutlined />}
               placeholder="Email"
             />
           </Form.Item>
