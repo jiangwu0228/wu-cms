@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/dist/client/router";
+
+import axios from "axios";
+import { AES } from "crypto-js";
 
 import styled from "styled-components";
 import { Form, Input, Radio, Checkbox, Button } from "antd";
@@ -13,29 +17,46 @@ const FormWrap = styled.div`
   margin: auto;
 `;
 
-const Heading = styled.h1`
+const StyledTitle = styled.h1`
   display: flex;
   justify-content: center;
   align-items: center;
   color: #000;
 `;
 
-function Login() {
-  const [form] = Form.useForm();
-  const [formLayout, setFormLayout] = useState("horizontal");
+const loginURL = "https://cms.chtoma.com/api/login";
 
-  const onFormLayoutChange = ({ layout }) => {
-    setFormLayout(layout);
+const Login = () =>  {
+  const [form] = Form.useForm();
+  const router = useRouter();
+  const Role = {
+    student: "student",
+    teacher: "teacher",
+    manager: "manager",
   };
 
-  const formItemLayout =
-    formLayout === "horizontal"
-      ? {
-          wrapperCol: {
-            span: 24,
-          },
+  const onFinish = (values) => {
+    axios({
+      method: "post",
+      url: loginURL,
+      data: {
+        email: values.email,
+        password: AES.encrypt(values.password, "cms").toString(),
+        role: values.role,
+      },
+    })
+      .then(function (response) {
+        if (response.status === 201) {
+          if (values.remember === true) {
+            localStorage.setItem('myAuth', response.data.data.token);
+          }
+          router.push(`/dashboard/${values.role}`);
         }
-      : null;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   return (
     <>
@@ -44,21 +65,23 @@ function Login() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Heading>Course Management Assistant</Heading>
+      <StyledTitle>Course Management Assistant</StyledTitle>
 
       <FormWrap>
         <Form
-          {...formItemLayout}
-          layout={formLayout}
+          name="login"
           form={form}
-          rules={[{required: true}]}
           initialValues={{
-            layout: formLayout,
+            remember: true,
           }}
-          onValuesChange={onFormLayoutChange}
+          onFinish={onFinish}
         >
-          <Form.Item name="layout">
-            <Radio.Group value={formLayout} defaultValue={"student"}>
+          <Form.Item
+            name="role"
+            initialValue={Role.manager}
+            rules={[{ required: true }]}
+          >
+            <Radio.Group>
               <Radio.Button value="student">Student</Radio.Button>
               <Radio.Button value="teacher">Teacher</Radio.Button>
               <Radio.Button value="manager">Manager</Radio.Button>
@@ -78,10 +101,7 @@ function Login() {
               },
             ]}
           >
-            <Input
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder="Email"
-            />
+            <Input prefix={<UserOutlined />} placeholder="Email" />
           </Form.Item>
 
           <Form.Item
@@ -97,16 +117,14 @@ function Login() {
             hasFeedback
           >
             <Input.Password
-              prefix={<LockOutlined className="site-form-item-icon" />}
+              prefix={<LockOutlined />}
               type="password"
               placeholder="Password"
             />
           </Form.Item>
 
-          <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
+          <Form.Item name="remember" valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
           <Form.Item>
