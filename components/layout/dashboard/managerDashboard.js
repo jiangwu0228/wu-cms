@@ -64,18 +64,18 @@ const ManagerDashboard = ({ children }) => {
   };
 
   return (
-    <Layout>
+    <Layout style={{ height: "100vh" }}>
       <Sider
         collapsible
         collapsed={collapsed}
         onCollapse={toggle}
-        style={{ height: "100vh" }}
       >
         <Logo>
           <Link href="/">
             <span style={{ color: "#fff", cursor: "pointer" }}>CMS</span>
           </Link>
         </Logo>
+        
         <Menu theme="dark" defaultSelectedKeys={["overview"]} mode="inline">
           <Menu.Item key="overview" icon={<DashboardOutlined />}>
             Overview

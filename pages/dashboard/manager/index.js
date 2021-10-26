@@ -22,7 +22,7 @@ export default function Login() {
         <title>Manager Dashboard</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div>manager</div>
+      <div>managerDashboard</div>
     </>
   );
 }

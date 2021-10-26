@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import "antd/dist/antd.css";
 import { Menu } from "antd";
 import { TeamOutlined, SolutionOutlined } from "@ant-design/icons";
+
 const { SubMenu } = Menu;
 const StudentList = () => {
   onclick;
