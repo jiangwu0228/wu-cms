@@ -48,7 +48,7 @@ const { SubMenu } = Menu;
 
 const ManagerDashboard = ({ children }) => {
   const router = useRouter();
-  const { asPath, pathname } = useRouter();
+  const { pathname } = useRouter();
   const manager = pathname.startsWith("/dashboard/manager");
   const student = pathname.startsWith("/dashboard/student");
   const teacher = pathname.startsWith("/dashboard/teacher");
@@ -60,24 +60,25 @@ const ManagerDashboard = ({ children }) => {
   };
 
   const logout = () => {
+    //will do it later
     return <a href="/">logout</a>;
   };
 
   return (
     <Layout style={{ height: "100vh" }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={toggle}
-      >
+      <Sider collapsible collapsed={collapsed} onCollapse={toggle}>
         <Logo>
           <Link href="/">
             <span style={{ color: "#fff", cursor: "pointer" }}>CMS</span>
           </Link>
         </Logo>
-        
+
         <Menu theme="dark" defaultSelectedKeys={["overview"]} mode="inline">
-          <Menu.Item key="overview" icon={<DashboardOutlined />}>
+          <Menu.Item
+            key="overview"
+            icon={<DashboardOutlined />}
+            onClick={() => router.push(baseUrl)}
+          >
             Overview
           </Menu.Item>
 
@@ -97,26 +98,26 @@ const ManagerDashboard = ({ children }) => {
             icon={<DeploymentUnitOutlined />}
             title="Teacher"
           >
-            <Menu.Item key="teacherList" icon={<TeamOutlined />}>
+            <Menu.Item key="teacherList" icon={<TeamOutlined />} onClick={() => router.push(baseUrl + "teacher-list")}>
               Teacher List
             </Menu.Item>
           </SubMenu>
 
           <SubMenu key="course" icon={<ReadOutlined />} title="Course">
-            <Menu.Item key="allCourse" icon={<UnorderedListOutlined />}>
+            <Menu.Item key="allCourse" icon={<UnorderedListOutlined />} onClick={() => router.push(baseUrl + "course")}>
               All Course
             </Menu.Item>
 
-            <Menu.Item key="addCourse" icon={<FileAddOutlined />}>
+            <Menu.Item key="addCourse" icon={<FileAddOutlined />} onClick={() => router.push(baseUrl + "course/addCourse")}>
               Add Course
             </Menu.Item>
 
-            <Menu.Item key="editCourse" icon={<EditOutlined />}>
+            <Menu.Item key="editCourse" icon={<EditOutlined />} onClick={() => router.push(baseUrl + "course/editCourse")}>
               Edit Course
             </Menu.Item>
           </SubMenu>
 
-          <Menu.Item key="message" icon={<MessageOutlined />}>
+          <Menu.Item key="message" icon={<MessageOutlined />} onClick={() => router.push(baseUrl + "message")}>
             Message
           </Menu.Item>
         </Menu>

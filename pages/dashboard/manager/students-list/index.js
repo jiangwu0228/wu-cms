@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 
 import axios from "axios";
-import storage from "../../../lib/services/storage";
+import storage from "../../../../lib/services/storage";
 
 import { Table, Tag, Space, Button, Search, Input } from "antd";
 
@@ -9,13 +9,37 @@ const ManagerStudentList = () => {
   const [studentData, setsStudentData] = useState(null);
 
   const { Column } = Table;
+  const columns = [
+    { title: "No.", dataIndex: "id", key: "id" },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Area", dataIndex: "country", key: "country" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    {
+      title: "Selected Curriculum",
+      dataIndex: "courses",
+      key: "['course', 'name']",
+      render:(courses)=>courses?.map((item)=>item.name).join(',')
+    },
+    { title: "Student Type", dataIndex: "type", key: "typeName", render:(type)=>type.name},
+    { title: "Join Time", dataIndex: "createdAt", key: "createdAt" },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Space size="middle">
+          <a>Edit</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
 
   console.log(storage.token);
   useEffect(() => {
     axios({
       method: "get",
       // url: `${baseUrl}/students?page=${page}&limit=${limit}`,
-      url: "https://cms.chtoma.com/api/students?page=2&limit=10",
+      url: "https://cms.chtoma.com/api/students?page=1&limit=100",
       headers: { Authorization: `Bearer ${storage.token}` },
     })
       .then((response) => {
@@ -26,19 +50,6 @@ const ManagerStudentList = () => {
         console.log(error);
       });
   }, []);
-  //   axios({
-  //     method: "get",
-  //     // url: `${baseUrl}/students?page=${page}&limit=${limit}`,
-  //     url: "https://cms.chtoma.com/api/students?page=2&limit=10",
-  //     headers: { Authorization: `Bearer ${storage.token}` },
-  //   })
-  //     .then((res) => {
-  //       const data = res.data.data.student;
-  //       setsStudentData({});
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
 
   const handleAdd = () => {
     // const { count, dataSource } = this.state;
@@ -77,29 +88,12 @@ const ManagerStudentList = () => {
           />
         </Space>
       </div>
-      <Table dataSource={studentData}>
-        <Column title="No." dataIndex="1" key="1" />
-        <Column title="Name" dataIndex="name" key="name" />
-        <Column title="Area" dataIndex="country" key="country" />
-        <Column title="Email" dataIndex="email" key="email" />
-        <Column
-          title="Selected Curriculum"
-          dataIndex="courses.name"
-          key="courses.name"
-        />
-        <Column title="Student Type" dataIndex="type.name" key='type.name' />
-        <Column title="Join Time" dataIndex="createdAt" key="createdAt" />
-        <Column
-          title="Action"
-          key="action"
-          render={(text, record) => (
-            <Space size="middle">
-              <a>Edit</a>
-              <a>Delete</a>
-            </Space>
-          )}
-        />
-      </Table>
+      <Table
+        columns={columns}
+        dataSource={studentData}
+        pagination={{ pageSize: 10 }}
+        scroll={{ y: "max-content" }}
+      />
     </Fragment>
   );
 };
