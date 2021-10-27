@@ -1,42 +1,16 @@
 import React, { Fragment, useState, useEffect } from "react";
+import Link from "next/link";
 
 import axios from "axios";
 import storage from "../../../../lib/services/storage";
 
-import { Table, Tag, Space, Button, Search, Input } from "antd";
+import { Table, Space, Button, Search, Input } from "antd";
 
 const ManagerStudentList = () => {
   const [studentData, setsStudentData] = useState(null);
 
-  const { Column } = Table;
-  const columns = [
-    { title: "No.", dataIndex: "id", key: "index",render: (_1, _2, index) => index + 1 },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Area", dataIndex: "country", key: "country" },
-    { title: "Email", dataIndex: "email", key: "email" },
-    {
-      title: "Selected Curriculum",
-      dataIndex: "courses",
-      key: "courseName",
-      render:(courses)=>courses?.map((item)=>item.name).join(',')
-    },
-    { title: "Student Type", dataIndex: "type", key: "typeName", render:(type)=>type.name},
-    { title: "Join Time", dataIndex: "createdAt", key: "createdAt" },
-    {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
-        </Space>
-      ),
-    },
-  ];
-
-  console.log(storage.token);
-
   //get all student data request
+  //will creat a file as api
   useEffect(() => {
     axios({
       method: "get",
@@ -53,6 +27,63 @@ const ManagerStudentList = () => {
       });
   }, []);
 
+  //set data in array
+  const columns = [
+    {
+      title: "No.",
+      dataIndex: "index",
+      key: "index",
+      render: (_1, _2, index) => index + 1,
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortDirections: ["descend"],
+      render: (_, record) => (
+        <Link href={`students-list/${record.id}`}>{record.name}</Link>
+      ),
+    },
+    { title: "Area", dataIndex: "country", key: "country" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    {
+      title: "Selected Curriculum",
+      dataIndex: "courses",
+      key: "courseName",
+      render: (courses) => courses.map((item) => item.name).join(","),
+    },
+    {
+      title: "Student Type",
+      dataIndex: "type",
+      key: "typeName",
+      filters: [
+        {
+          text: "tester",
+          value: "tester",
+        },
+        {
+          text: "developer",
+          value: "developer",
+        },
+      ],
+      onFilter: (value, record) => record.type.name.indexOf(value) === 0,
+      render: (type) => type.name,
+    },
+    { title: "Join Time", dataIndex: "createdAt", key: "createdAt" },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Space size="middle">
+          <a>Edit</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
+
+  //add feature
   const handleAdd = () => {
     // const { count, dataSource } = this.state;
     // const newData = {
@@ -66,7 +97,8 @@ const ManagerStudentList = () => {
     //   count: count + 1,
     // });
   };
-  console.log(studentData);
+
+  //search feature
   const onSearch = (value) => console.log(value);
   const { Search } = Input;
 

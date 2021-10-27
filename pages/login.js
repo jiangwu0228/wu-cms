@@ -46,8 +46,9 @@ const Login = () => {
       .then(function (response) {
         if (response.status === 201) {
           if (values.remember === true) {
-            localStorage.setItem("myAuth", response.data.data.token);
+            //how to set time out
           }
+          localStorage.setItem("myAuth", response.data.data.token)
           router.push(`/dashboard/${values.role}`);
         }
       })

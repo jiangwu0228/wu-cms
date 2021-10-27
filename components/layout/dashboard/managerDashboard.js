@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import Router, { useRouter } from "next/router";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import storage from "../../../lib/services/storage";
 
 import styled from "styled-components";
 
 import "antd/dist/antd.css";
-import { Layout, Menu, Breadcrumb, Avatar, Image, Badge, Popover } from "antd";
+import { Layout, Menu, Breadcrumb, Avatar, Badge, Popover } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -24,7 +24,7 @@ import {
   EditOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import StudentList from "../../dashboard/sider/studentList";
+// import StudentList from "../../dashboard/sider/studentList";
 
 const Logo = styled.div`
   height: 64px;
@@ -45,17 +45,16 @@ const HeaderRight = styled.div`
   float: right;
 `;
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const ManagerDashboard = ({ children }) => {
   const router = useRouter();
-  const { pathname } = useRouter();
-  const manager = pathname.startsWith("/dashboard/manager");
-  const student = pathname.startsWith("/dashboard/student");
-  const teacher = pathname.startsWith("/dashboard/teacher");
+  // const { pathname } = useRouter();
+  // const manager = pathname.startsWith("/dashboard/manager");
+  // const student = pathname.startsWith("/dashboard/student");
+  // const teacher = pathname.startsWith("/dashboard/teacher");
   const baseUrl = "/dashboard/manager/";
-  console.log(student);
   const [collapsed, toggleCollapse] = useState(false);
   const toggle = () => {
     toggleCollapse(!collapsed);
@@ -64,7 +63,6 @@ const ManagerDashboard = ({ children }) => {
   const logoutRequest = () => {
     axios({
       method: "post",
-      // url: `${baseUrl}/students?page=${page}&limit=${limit}`,
       url: "https://cms.chtoma.com/api/logout",
       headers: { Authorization: `Bearer ${storage.token}` },
     })
@@ -80,7 +78,6 @@ const ManagerDashboard = ({ children }) => {
   };
 
   const logout = () => {
-    //will do it later
     return <a onClick={logoutRequest}>logout</a>;
   };
 
@@ -175,7 +172,6 @@ const ManagerDashboard = ({ children }) => {
 
           <HeaderRight>
             <Badge count={100}>
-              {/* <Avatar shape="square" size="default" /> */}
               <BellOutlined style={{ fontSize: "1.5rem" }} />
             </Badge>
 
