@@ -10,14 +10,14 @@ const ManagerStudentList = () => {
 
   const { Column } = Table;
   const columns = [
-    { title: "No.", dataIndex: "id", key: "id" },
+    { title: "No.", dataIndex: "id", key: "index",render: (_1, _2, index) => index + 1 },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Area", dataIndex: "country", key: "country" },
     { title: "Email", dataIndex: "email", key: "email" },
     {
       title: "Selected Curriculum",
       dataIndex: "courses",
-      key: "['course', 'name']",
+      key: "courseName",
       render:(courses)=>courses?.map((item)=>item.name).join(',')
     },
     { title: "Student Type", dataIndex: "type", key: "typeName", render:(type)=>type.name},
@@ -35,6 +35,8 @@ const ManagerStudentList = () => {
   ];
 
   console.log(storage.token);
+
+  //get all student data request
   useEffect(() => {
     axios({
       method: "get",

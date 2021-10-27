@@ -1,7 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Router, { useRouter } from "next/router";
+import axios from "axios";
+import storage from "../../../lib/services/storage";
 
 import styled from "styled-components";
 
@@ -59,9 +61,27 @@ const ManagerDashboard = ({ children }) => {
     toggleCollapse(!collapsed);
   };
 
+  const logoutRequest = () => {
+    axios({
+      method: "post",
+      // url: `${baseUrl}/students?page=${page}&limit=${limit}`,
+      url: "https://cms.chtoma.com/api/logout",
+      headers: { Authorization: `Bearer ${storage.token}` },
+    })
+      .then((response) => {
+        if (response.status === 201) {
+          localStorage.clear()
+          router.push('/login');
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   const logout = () => {
     //will do it later
-    return <a href="/">logout</a>;
+    return <a onClick={logoutRequest}>logout</a>;
   };
 
   return (
@@ -98,26 +118,46 @@ const ManagerDashboard = ({ children }) => {
             icon={<DeploymentUnitOutlined />}
             title="Teacher"
           >
-            <Menu.Item key="teacherList" icon={<TeamOutlined />} onClick={() => router.push(baseUrl + "teacher-list")}>
+            <Menu.Item
+              key="teacherList"
+              icon={<TeamOutlined />}
+              onClick={() => router.push(baseUrl + "teacher-list")}
+            >
               Teacher List
             </Menu.Item>
           </SubMenu>
 
           <SubMenu key="course" icon={<ReadOutlined />} title="Course">
-            <Menu.Item key="allCourse" icon={<UnorderedListOutlined />} onClick={() => router.push(baseUrl + "course")}>
+            <Menu.Item
+              key="allCourse"
+              icon={<UnorderedListOutlined />}
+              onClick={() => router.push(baseUrl + "course")}
+            >
               All Course
             </Menu.Item>
 
-            <Menu.Item key="addCourse" icon={<FileAddOutlined />} onClick={() => router.push(baseUrl + "course/addCourse")}>
+            <Menu.Item
+              key="addCourse"
+              icon={<FileAddOutlined />}
+              onClick={() => router.push(baseUrl + "course/addCourse")}
+            >
               Add Course
             </Menu.Item>
 
-            <Menu.Item key="editCourse" icon={<EditOutlined />} onClick={() => router.push(baseUrl + "course/editCourse")}>
+            <Menu.Item
+              key="editCourse"
+              icon={<EditOutlined />}
+              onClick={() => router.push(baseUrl + "course/editCourse")}
+            >
               Edit Course
             </Menu.Item>
           </SubMenu>
 
-          <Menu.Item key="message" icon={<MessageOutlined />} onClick={() => router.push(baseUrl + "message")}>
+          <Menu.Item
+            key="message"
+            icon={<MessageOutlined />}
+            onClick={() => router.push(baseUrl + "message")}
+          >
             Message
           </Menu.Item>
         </Menu>
