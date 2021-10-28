@@ -4,10 +4,11 @@ import Link from "next/link";
 import axios from "axios";
 import storage from "../../../../lib/services/storage";
 
-import { Table, Space, Button, Search, Input } from "antd";
+import { Table, Space, Button, Search, Input, Modal } from "antd";
 
 const ManagerStudentList = () => {
   const [studentData, setsStudentData] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   //get all student data request
   //will creat a file as api
@@ -26,6 +27,19 @@ const ManagerStudentList = () => {
         console.log(error);
       });
   }, []);
+
+  //add modal
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   //set data in array
   const columns = [
@@ -74,17 +88,17 @@ const ManagerStudentList = () => {
     {
       title: "Action",
       key: "action",
-      render: (text, record) => (
+      render: (record) => (
         <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
+          <a onChange={editRecordHandler(record.id)}>Edit</a>
+          <a onClick={deleteRecordHandler(record.id)}>Delete</a>
         </Space>
       ),
     },
   ];
 
   //add feature
-  const handleAdd = () => {
+  const addRecordHandler = () => {
     // const { count, dataSource } = this.state;
     // const newData = {
     //   key: count,
@@ -102,11 +116,19 @@ const ManagerStudentList = () => {
   const onSearch = (value) => console.log(value);
   const { Search } = Input;
 
+  const editRecordHandler = (id) => {
+    console.log(id + "edit");
+  };
+
+  const deleteRecordHandler = (id) => {
+    console.log(id + "del");
+  };
+
   return (
     <Fragment>
       <div>
         <Button
-          onClick={handleAdd}
+          onClick={showModal}
           type="primary"
           style={{
             marginBottom: 16,
@@ -114,6 +136,16 @@ const ManagerStudentList = () => {
         >
           Add a row
         </Button>
+        <Modal
+          title="Basic Modal"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
         <Space direction="vertical" style={{ float: "right" }}>
           <Search
             placeholder="input search text"
