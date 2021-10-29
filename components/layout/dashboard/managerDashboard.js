@@ -26,6 +26,7 @@ import {
 } from "@ant-design/icons";
 // import StudentList from "../../dashboard/sider/studentList";
 
+//style
 const Logo = styled.div`
   height: 64px;
   display: inline-flex;
@@ -45,6 +46,17 @@ const HeaderRight = styled.div`
   float: right;
 `;
 
+const HeaderIcon = styled.div`
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s;
+  &:hover {
+    color: #1890ff;
+  }
+`;
+
+//layout
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -60,6 +72,7 @@ const ManagerDashboard = ({ children }) => {
     toggleCollapse(!collapsed);
   };
 
+  //logout
   const logoutRequest = () => {
     axios({
       method: "post",
@@ -68,8 +81,8 @@ const ManagerDashboard = ({ children }) => {
     })
       .then((response) => {
         if (response.status === 201) {
-          localStorage.clear()
-          router.push('/login');
+          localStorage.clear();
+          router.push("/login");
         }
       })
       .catch(function (error) {
@@ -82,8 +95,19 @@ const ManagerDashboard = ({ children }) => {
   };
 
   return (
-    <Layout style={{ height: "100vh" }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={toggle}>
+    <Layout>
+      {/* side bar in left*/}
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={toggle}
+        style={{
+          overflow: "auto",
+          height: "100vh",
+          position: "sticky",
+          top: 0,
+        }}
+      >
         <Logo>
           <Link href="/">
             <span style={{ color: "#fff", cursor: "pointer" }}>CMS</span>
@@ -160,40 +184,48 @@ const ManagerDashboard = ({ children }) => {
         </Menu>
       </Sider>
 
+      {/* header and content in right */}
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: toggle,
-            }
-          )}
-
+        <Header
+        // className="site-layout-background"
+          theme="dark"
+          style={{
+            zIndex: 10,
+            width: "100%",
+            position: "sticky",
+            top: 0,
+            justifyContent: "space-between",
+            display: "flex",
+          }}
+        >
+          <HeaderIcon onClick={toggle}>
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </HeaderIcon>
+          {/* notification and profile */}
           <HeaderRight>
             <Badge count={100}>
-              <BellOutlined style={{ fontSize: "1.5rem" }} />
+              <BellOutlined style={{ color: "#fff", fontSize: "1.5rem" }} />
             </Badge>
 
             <Popover placement="bottomRight" content={logout}>
               <Avatar
                 icon={<UserOutlined />}
-                style={{ margin: "0 1.5rem 0 3rem" }}
+                style={{ margin: "0 0 0 3rem" }}
               />
             </Popover>
           </HeaderRight>
         </Header>
-
+        {/* bread crumb nav*/}
         <Breadcrumb style={{ margin: "16px 16px 0" }}>
           <Breadcrumb.Item>User</Breadcrumb.Item>
           <Breadcrumb.Item>Bill</Breadcrumb.Item>
         </Breadcrumb>
-
+        {/* content */}
         <Content
           className="site-layout-background"
           style={{
-            margin: "24px 16px",
-            padding: 24,
+            margin: "16px",
+            padding: 16,
           }}
         >
           {children}

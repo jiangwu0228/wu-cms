@@ -5,6 +5,7 @@ import axios from "axios";
 import storage from "../../../../lib/services/storage";
 
 import { Table, Space, Button, Search, Input, Modal } from "antd";
+import { Content } from "antd/lib/layout/layout";
 
 const ManagerStudentList = () => {
   const [studentData, setsStudentData] = useState(null);
@@ -90,27 +91,12 @@ const ManagerStudentList = () => {
       key: "action",
       render: (record) => (
         <Space size="middle">
-          <a onChange={editRecordHandler(record.id)}>Edit</a>
-          <a onClick={deleteRecordHandler(record.id)}>Delete</a>
+          <a onClick={()=>(editRecordHandler(record.id))}>Edit</a>
+          <a onClick={()=>(deleteRecordHandler(record.id))}>Delete</a>
         </Space>
       ),
     },
   ];
-
-  //add feature
-  const addRecordHandler = () => {
-    // const { count, dataSource } = this.state;
-    // const newData = {
-    //   key: count,
-    //   name: `Edward King ${count}`,
-    //   age: "32",
-    //   address: `London, Park Lane no. ${count}`,
-    // };
-    // this.setState({
-    //   dataSource: [...dataSource, newData],
-    //   count: count + 1,
-    // });
-  };
 
   //search feature
   const onSearch = (value) => console.log(value);
@@ -125,7 +111,7 @@ const ManagerStudentList = () => {
   };
 
   return (
-    <Fragment>
+    <Content>
       <div>
         <Button
           onClick={showModal}
@@ -134,10 +120,10 @@ const ManagerStudentList = () => {
             marginBottom: 16,
           }}
         >
-          Add a row
+          + Add
         </Button>
         <Modal
-          title="Basic Modal"
+          title="Add Student"
           visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
@@ -160,7 +146,7 @@ const ManagerStudentList = () => {
         pagination={{ pageSize: 10 }}
         scroll={{ y: "max-content" }}
       />
-    </Fragment>
+    </Content>
   );
 };
 
