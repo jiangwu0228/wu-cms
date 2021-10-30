@@ -60,7 +60,30 @@ const ManagerStudentList = () => {
         <Link href={`students-list/${record.id}`}>{record.name}</Link>
       ),
     },
-    { title: "Area", dataIndex: "country", key: "country" },
+    {
+      title: "Area",
+      dataIndex: "country",
+      key: "country",
+      filters: [
+        {
+          text: "China",
+          value: "China",
+        },
+        {
+          text: "New Zealand",
+          value: "New Zealand",
+        },
+        {
+          text: "Canada",
+          value: "Canada",
+        },
+        {
+          text: "Australia",
+          value: "Australia",
+        },
+      ],
+      onFilter: (value, record) => record.country.indexOf(value) === 0,
+    },
     { title: "Email", dataIndex: "email", key: "email" },
     {
       title: "Selected Curriculum",
@@ -91,8 +114,8 @@ const ManagerStudentList = () => {
       key: "action",
       render: (record) => (
         <Space size="middle">
-          <a onClick={()=>(editRecordHandler(record.id))}>Edit</a>
-          <a onClick={()=>(deleteRecordHandler(record.id))}>Delete</a>
+          <a onClick={() => editRecordHandler(record.id)}>Edit</a>
+          <a onClick={() => deleteRecordHandler(record.id)}>Delete</a>
         </Space>
       ),
     },
@@ -144,7 +167,7 @@ const ManagerStudentList = () => {
         columns={columns}
         dataSource={studentData}
         pagination={{ pageSize: 10 }}
-        onShowSizeChange={onShowSizeChange}
+        // onShowSizeChange={onShowSizeChange}
         scroll={{ y: "max-content" }}
       />
     </Content>
