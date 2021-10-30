@@ -10,6 +10,8 @@ import { Content } from "antd/lib/layout/layout";
 const ManagerStudentList = () => {
   const [studentData, setsStudentData] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   //get all student data request
   //will creat a file as api
@@ -133,6 +135,12 @@ const ManagerStudentList = () => {
     console.log(id + "del");
   };
 
+  //pagination feature
+  const onShowSizeChange = (current, size) => {
+    setPageSize(size);
+    setCurrentPage(current);
+  };
+
   return (
     <Content>
       <div>
@@ -166,8 +174,11 @@ const ManagerStudentList = () => {
       <Table
         columns={columns}
         dataSource={studentData}
-        pagination={{ pageSize: 10 }}
-        // onShowSizeChange={onShowSizeChange}
+        pagination={{
+          defaultCurrent: currentPage,
+          pageSize: pageSize,
+          onShowSizeChange,
+        }}
         scroll={{ y: "max-content" }}
       />
     </Content>
