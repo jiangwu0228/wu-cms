@@ -17,7 +17,7 @@ const ManagerStudentList = () => {
     axios({
       method: "get",
       // url: `${baseUrl}/students?page=${page}&limit=${limit}`,
-      url: "https://cms.chtoma.com/api/students?page=1&limit=100",
+      url: "https://cms.chtoma.com/api/students?page=1&limit=500",
       headers: { Authorization: `Bearer ${storage.token}` },
     })
       .then((response) => {
@@ -83,7 +83,7 @@ const ManagerStudentList = () => {
         },
       ],
       onFilter: (value, record) => record.type.name.indexOf(value) === 0,
-      render: (type) => type.name,
+      render: (type) => type?.name,
     },
     { title: "Join Time", dataIndex: "createdAt", key: "createdAt" },
     {

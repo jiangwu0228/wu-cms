@@ -42,8 +42,10 @@ const Logo = styled.div`
 `;
 
 const HeaderRight = styled.div`
-  display: block;
+  display: flex;
   float: right;
+  align-items: center;
+  // justify-content: center;
 `;
 
 const HeaderIcon = styled.div`
@@ -187,7 +189,7 @@ const ManagerDashboard = ({ children }) => {
       {/* header and content in right */}
       <Layout className="site-layout">
         <Header
-        // className="site-layout-background"
+          // className="site-layout-background"
           theme="dark"
           style={{
             zIndex: 10,
@@ -203,14 +205,19 @@ const ManagerDashboard = ({ children }) => {
           </HeaderIcon>
           {/* notification and profile */}
           <HeaderRight>
-            <Badge count={100}>
-              <BellOutlined style={{ color: "#fff", fontSize: "1.5rem" }} />
+            <Badge size="small" count={24} offset={[13, 0]} style={{}}>
+              <BellOutlined
+                style={{
+                  color: "#fff",
+                  fontSize: "24px",
+                }}
+              />
             </Badge>
 
             <Popover placement="bottomRight" content={logout}>
               <Avatar
                 icon={<UserOutlined />}
-                style={{ margin: "0 0 0 3rem" }}
+                style={{ margin: "0 0 0 2.5rem" }}
               />
             </Popover>
           </HeaderRight>
