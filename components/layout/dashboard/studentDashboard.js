@@ -52,7 +52,7 @@ const StudentDashboard = ({ children }) => {
   const manager = pathname.startsWith("/dashboard/manager");
   const student = pathname.startsWith("/dashboard/student");
   const teacher = pathname.startsWith("/dashboard/teacher");
-  console.log(student)
+  console.log(student);
   const [collapsed, toggleCollapse] = useState(false);
   const toggle = () => {
     toggleCollapse(!collapsed);
@@ -68,7 +68,7 @@ const StudentDashboard = ({ children }) => {
         collapsible
         collapsed={collapsed}
         onCollapse={toggle}
-        style={{ height: "100vh",overflow: 'auto', }}
+        style={{ height: "100vh", overflow: "auto" }}
       >
         <Logo>
           <Link href="/">
@@ -121,7 +121,17 @@ const StudentDashboard = ({ children }) => {
       </Sider>
 
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ zIndex: 10, width: "100%", position: "sticky", top: 0, justifyContent: "space-between",display: "flex" }}>
+        <Header
+          className="site-layout-background"
+          style={{
+            zIndex: 10,
+            width: "100%",
+            position: "sticky",
+            top: 0,
+            justifyContent: "space-between",
+            display: "flex",
+          }}
+        >
           {React.createElement(
             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
             {

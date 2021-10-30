@@ -144,6 +144,7 @@ const ManagerStudentList = () => {
         columns={columns}
         dataSource={studentData}
         pagination={{ pageSize: 10 }}
+        onShowSizeChange={onShowSizeChange}
         scroll={{ y: "max-content" }}
       />
     </Content>
