@@ -1,14 +1,14 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-import axios from "axios";
-import storage from "../../../../lib/services/storage";
+import { getStudentList, deleteStudent } from "../../../../lib/services/api-services";
+import  AddStudentForm from "../../../../components/dashboard/common/addStudentForm";
 
-import { Table, Space, Button, Search, Input, Modal } from "antd";
+import { Table, Space, Button, Search, Input, Modal, Popconfirm } from "antd";
 import { Content } from "antd/lib/layout/layout";
 
 const ManagerStudentList = () => {
-  const [studentData, setsStudentData] = useState(null);
+  const [studentData, setStudentData] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,19 +16,10 @@ const ManagerStudentList = () => {
   //get all student data request
   //will creat a file as api
   useEffect(() => {
-    axios({
-      method: "get",
-      // url: `${baseUrl}/students?page=${page}&limit=${limit}`,
-      url: "https://cms.chtoma.com/api/students?page=1&limit=500",
-      headers: { Authorization: `Bearer ${storage.token}` },
-    })
-      .then((response) => {
-        console.log(response.data.data.students);
-        setsStudentData(response.data.data.students);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    getStudentList(1, 500).then((response) => {
+      // console.log(response);
+      setStudentData(response.data.data.students);
+    });
   }, []);
 
   //add modal
@@ -42,6 +33,38 @@ const ManagerStudentList = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  //search feature
+  const onSearch = (value) => console.log(value);
+  const { Search } = Input;
+
+  //edit feature
+  const editRecordHandler = (id) => {
+    console.log(id + "edit");
+  };
+
+  //delete student
+  const deleteRecordHandler = (id) => {
+    console.log(id + "del");
+    deleteStudent(id).then((response) => {
+      // console.log(response);
+      if (response.status === 200) {
+        console.log("delete success");
+        console.log(response);
+        //refresh table
+        getStudentList(1, 500).then((response) => {
+          // console.log(response);
+          setStudentData(response.data.data.students);
+        } );
+      }
+    });
+  };
+
+  //pagination feature
+  const onShowSizeChange = (current, size) => {
+    setPageSize(size);
+    setCurrentPage(current);
   };
 
   //set data in array
@@ -117,29 +140,17 @@ const ManagerStudentList = () => {
       render: (record) => (
         <Space size="middle">
           <a onClick={() => editRecordHandler(record.id)}>Edit</a>
-          <a onClick={() => deleteRecordHandler(record.id)}>Delete</a>
+          {/* <a onClick={() => deleteRecordHandler(record.id)}>Delete</a> */}
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => deleteRecordHandler(record.id)}
+          >
+            <a>Delete</a>
+          </Popconfirm>
         </Space>
       ),
     },
   ];
-
-  //search feature
-  const onSearch = (value) => console.log(value);
-  const { Search } = Input;
-
-  const editRecordHandler = (id) => {
-    console.log(id + "edit");
-  };
-
-  const deleteRecordHandler = (id) => {
-    console.log(id + "del");
-  };
-
-  //pagination feature
-  const onShowSizeChange = (current, size) => {
-    setPageSize(size);
-    setCurrentPage(current);
-  };
 
   return (
     <Content>
@@ -159,9 +170,7 @@ const ManagerStudentList = () => {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <AddStudentForm/>
         </Modal>
         <Space direction="vertical" style={{ float: "right" }}>
           <Search

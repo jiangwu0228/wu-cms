@@ -3,8 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 
-import axios from "axios";
-import { AES } from "crypto-js";
+import { login } from "../lib/services/api-services";
 
 import styled from "styled-components";
 import { Form, Input, Radio, Checkbox, Button } from "antd";
@@ -34,21 +33,13 @@ const Login = () => {
   };
 
   const onFinish = (values) => {
-    axios({
-      method: "post",
-      url: "https://cms.chtoma.com/api/login",
-      data: {
-        email: values.email,
-        password: AES.encrypt(values.password, "cms").toString(),
-        role: values.role,
-      },
-    })
+    login(values)
       .then(function (response) {
         if (response.status === 201) {
           if (values.remember === true) {
             //how to set time out
           }
-          localStorage.setItem("myAuth", response.data.data.token)
+          localStorage.setItem("myAuth", response.data.data.token);
           router.push(`/dashboard/${values.role}`);
         }
       })

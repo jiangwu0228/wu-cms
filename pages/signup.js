@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 
-import axios from "axios";
+import { signup } from "../lib/services/api-services";
 
 import styled from "styled-components";
 import "antd/dist/antd.css";
@@ -34,15 +34,7 @@ function SignUp() {
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
-    axios({
-      method: "post",
-      url: "https://cms.chtoma.com/api/signup",
-      data: {
-        email: values.email,
-        password: values.password,
-        role: values.role,
-      },
-    })
+    signup(values)
       .then(function (response) {
         console.log(response.status)
         if (response.status === 201) {
