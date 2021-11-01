@@ -1,34 +1,46 @@
-import React, { useState, useEffect } from "react";
+//# sourceURL=dynamicScript.js
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { debounce } from "lodash";
+import { formatDistanceToNow } from "date-fns";
 
 import {
   getStudentList,
   deleteStudent,
   addStudent,
+  searchStudentByName,
 } from "../../../../lib/services/api-services";
 import AddStudentForm from "../../../../components/dashboard/common/addStudentForm";
 import EditStudentForm from "../../../../components/dashboard/common/editStudentForm";
 
 import { Table, Space, Button, Search, Input, Modal, Popconfirm } from "antd";
-import { formatDistanceToNow } from 'date-fns';
 import { Content } from "antd/lib/layout/layout";
 import { getDomainLocale } from "next/dist/shared/lib/router/router";
+import { useForm } from "antd/lib/form/Form";
 
 const ManagerStudentList = () => {
+  const [form] = useForm();
+  const { Search } = Input;
+
   const [studentData, setStudentData] = useState(null);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
 
   //get all student data request
   useEffect(() => {
     getStudentList(1, 500).then((response) => {
+      if (response.status === 200) {
+        setStudentData(response.data.data.students);
+      } else {
+        alert("Error, try it later");
+      }
       // console.log(response);
-      setStudentData(response.data.data.students);
     });
   }, []);
 
-  //add modal
+  //add/edit modal
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -41,13 +53,38 @@ const ManagerStudentList = () => {
     setIsModalVisible(false);
   };
 
-  //search feature
-  const onSearch = (value) => console.log(value);
-  const { Search } = Input;
+  //on change debounce to prevent multiple request
+  const onChange = debounce((event) => {
+    onSearch(event.target.value);
+  }, 1000);
+  //manual search feature
+  const onSearch = (value) => {
+    searchStudentByName(value)
+      .then((response) => {
+        if (response.status === 200) {
+          setStudentData(response.data.data.students);
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+    //this is feature sort by name in local data
+    // const searchData = studentData.filter((student) => {
+    //   return student.name.toLowerCase().includes(value.toLowerCase());
+    // });
+    // setStudentData(searchData);
+  };
+
+  //add student
+  const addStudent = (values) => {
+    setEditingStudent(null);
+    console.log(editingStudent);
+  };
 
   //edit feature
-  const editRecordHandler = (id) => {
-    console.log(id + "edit");
+  const editRecordHandler = (value) => {
+    setEditingStudent(value);
+    console.log(editingStudent);
   };
 
   //delete student
@@ -59,7 +96,7 @@ const ManagerStudentList = () => {
         // getStudentList(1, 500).then((response) => {
         //   setStudentData(response.data.data.students);
         // } );
-        //or update table
+        //or update table by local data
         //copy student data
         const newStudentData = [...studentData];
         //find index of student
@@ -80,7 +117,7 @@ const ManagerStudentList = () => {
     setCurrentPage(current);
   };
 
-  //set data in array
+  //data and feature in table
   const columns = [
     {
       title: "No.",
@@ -92,8 +129,6 @@ const ManagerStudentList = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // sorter: (a, b) => a.name.length - b.name.length,
-      // sortDirections: ["descend"],
       sortDirections: ["ascend", "descend"],
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
@@ -160,7 +195,16 @@ const ManagerStudentList = () => {
       key: "action",
       render: (record) => (
         <Space size="middle">
-          <a onClick={() => showModal(record.id)}>Edit</a>
+          <a
+            onClick={() => {
+              editRecordHandler(record);
+              showModal();
+              // setEditingStudent(record);
+              // console.log(editingStudent);
+            }}
+          >
+            Edit
+          </a>
           <Popconfirm
             title="Are you sure to delete?"
             onConfirm={() => deleteRecordHandler(record.id)}
@@ -178,7 +222,10 @@ const ManagerStudentList = () => {
     <Content>
       <div>
         <Button
-          onClick={showModal}
+          onClick={() => {
+            addStudent();
+            showModal();
+          }}
           type="primary"
           style={{
             marginBottom: 16,
@@ -189,19 +236,24 @@ const ManagerStudentList = () => {
 
         <Space direction="vertical" style={{ float: "right" }}>
           <Search
-            placeholder="input search text"
+            placeholder="Search by name"
             onSearch={onSearch}
+            onChange={onChange}
             style={{ width: 200 }}
           />
         </Space>
       </div>
       <Modal
-        title="Add Student"
+        title={!!editingStudent ? "Edit Student" : "Add Student"}
+        centered
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <AddStudentForm />
+        <AddStudentForm
+        // form={form}
+        // editingStudent={editingStudent}
+        />
       </Modal>
       <Table
         columns={columns}

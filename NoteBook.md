@@ -38,6 +38,20 @@ My note book located here
 
 ###### Road Map
 
+
+
+###### Problem
+
+# can't set layout stictly
+
+​	add code below
+
+```
+position: "sticky",
+
+top: 0,
+```
+
 set up dev env
 
 build login page
@@ -45,10 +59,6 @@ build login page
 How can we make standardization, is there any document?
 
 Such as which should be abstract? Which should be in separate file.
-
-we dev project as component so if the component only use once so don't need be in separate file?
-
-and interface should be in separate file?
 
 router redirect check token
 

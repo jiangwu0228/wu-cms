@@ -13,9 +13,9 @@ import {
 } from "antd";
 import { useForm } from "antd/lib/form/Form";
 
-// const [form] = useForm();
+// const [form] = Form.useForm();
 
-function AddStudentForm(porps) {
+function AddStudentForm(props) {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
@@ -28,6 +28,7 @@ function AddStudentForm(porps) {
       wrapperCol={{
         span: 14,
       }}
+      form={props.form}
       layout="horizontal"
     >
       <Form.Item
