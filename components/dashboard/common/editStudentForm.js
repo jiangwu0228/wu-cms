@@ -12,7 +12,7 @@ import {
   Switch,
 } from "antd";
 
-function AddStudentForm(porps) {
+function EditStudentForm(porps) {
   return (
     <Form
       labelCol={{
@@ -55,4 +55,4 @@ function AddStudentForm(porps) {
   );
 }
 
-export default AddStudentForm;
+export default EditStudentForm;

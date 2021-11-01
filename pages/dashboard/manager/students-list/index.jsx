@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-import { getStudentList, deleteStudent } from "../../../../lib/services/api-services";
-import  AddStudentForm from "../../../../components/dashboard/common/addStudentForm";
+import {
+  getStudentList,
+  deleteStudent,
+  addStudent,
+} from "../../../../lib/services/api-services";
+import AddStudentForm from "../../../../components/dashboard/common/addStudentForm";
+import EditStudentForm from "../../../../components/dashboard/common/editStudentForm";
 
 import { Table, Space, Button, Search, Input, Modal, Popconfirm } from "antd";
+import { formatDistanceToNow } from 'date-fns';
 import { Content } from "antd/lib/layout/layout";
+import { getDomainLocale } from "next/dist/shared/lib/router/router";
 
 const ManagerStudentList = () => {
   const [studentData, setStudentData] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   //get all student data request
-  //will creat a file as api
   useEffect(() => {
     getStudentList(1, 500).then((response) => {
       // console.log(response);
@@ -46,17 +52,24 @@ const ManagerStudentList = () => {
 
   //delete student
   const deleteRecordHandler = (id) => {
-    console.log(id + "del");
     deleteStudent(id).then((response) => {
       // console.log(response);
       if (response.status === 200) {
-        console.log("delete success");
-        console.log(response);
-        //refresh table
-        getStudentList(1, 500).then((response) => {
-          // console.log(response);
-          setStudentData(response.data.data.students);
-        } );
+        // //refresh table via api
+        // getStudentList(1, 500).then((response) => {
+        //   setStudentData(response.data.data.students);
+        // } );
+        //or update table
+        //copy student data
+        const newStudentData = [...studentData];
+        //find index of student
+        const index = newStudentData.findIndex((student) => student.id === id);
+        //remove student from array
+        newStudentData.splice(index, 1);
+        //update student data
+        setStudentData(newStudentData);
+      } else {
+        console.log("error, delete fail");
       }
     });
   };
@@ -79,8 +92,10 @@ const ManagerStudentList = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortDirections: ["descend"],
+      // sorter: (a, b) => a.name.length - b.name.length,
+      // sortDirections: ["descend"],
+      sortDirections: ["ascend", "descend"],
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <Link href={`students-list/${record.id}`}>{record.name}</Link>
       ),
@@ -114,7 +129,7 @@ const ManagerStudentList = () => {
       title: "Selected Curriculum",
       dataIndex: "courses",
       key: "courseName",
-      render: (courses) => courses.map((item) => item.name).join(","),
+      render: (courses) => courses?.map((item) => item.name).join(","),
     },
     {
       title: "Student Type",
@@ -130,20 +145,27 @@ const ManagerStudentList = () => {
           value: "developer",
         },
       ],
-      onFilter: (value, record) => record.type.name.indexOf(value) === 0,
+      onFilter: (value, record) => record.type?.name.indexOf(value) === 0,
       render: (type) => type?.name,
     },
-    { title: "Join Time", dataIndex: "createdAt", key: "createdAt" },
+    {
+      title: "Join Time",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (value) =>
+        formatDistanceToNow(new Date(value), { addSuffix: true }),
+    },
     {
       title: "Action",
       key: "action",
       render: (record) => (
         <Space size="middle">
-          <a onClick={() => editRecordHandler(record.id)}>Edit</a>
-          {/* <a onClick={() => deleteRecordHandler(record.id)}>Delete</a> */}
+          <a onClick={() => showModal(record.id)}>Edit</a>
           <Popconfirm
-            title="Sure to delete?"
+            title="Are you sure to delete?"
             onConfirm={() => deleteRecordHandler(record.id)}
+            okText="Confirm"
+            cancelText="Cancel"
           >
             <a>Delete</a>
           </Popconfirm>
@@ -164,14 +186,7 @@ const ManagerStudentList = () => {
         >
           + Add
         </Button>
-        <Modal
-          title="Add Student"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <AddStudentForm/>
-        </Modal>
+
         <Space direction="vertical" style={{ float: "right" }}>
           <Search
             placeholder="input search text"
@@ -180,6 +195,14 @@ const ManagerStudentList = () => {
           />
         </Space>
       </div>
+      <Modal
+        title="Add Student"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <AddStudentForm />
+      </Modal>
       <Table
         columns={columns}
         dataSource={studentData}
