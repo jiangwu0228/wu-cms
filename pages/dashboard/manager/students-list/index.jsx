@@ -8,25 +8,35 @@ import {
   getStudentList,
   deleteStudent,
   addStudent,
+  editStudent,
   searchStudentByName,
 } from "../../../../lib/services/api-services";
-import AddStudentForm from "../../../../components/dashboard/common/addStudentForm";
-import EditStudentForm from "../../../../components/dashboard/common/editStudentForm";
+import ManipulateStudentForm from "../../../../components/dashboard/common/manipulateStudentForm";
 
-import { Table, Space, Button, Search, Input, Modal, Popconfirm } from "antd";
+import {
+  Table,
+  Space,
+  Button,
+  Search,
+  Input,
+  Modal,
+  Popconfirm,
+  Form,
+} from "antd";
 import { Content } from "antd/lib/layout/layout";
-import { getDomainLocale } from "next/dist/shared/lib/router/router";
 import { useForm } from "antd/lib/form/Form";
 
 const ManagerStudentList = () => {
-  const [form] = useForm();
-  const { Search } = Input;
-
   const [studentData, setStudentData] = useState(null);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
+
+  const [form, setForm] = useState(null);
+
+  // const [form] = Form.useForm();
+  const { Search } = Input;
 
   //get all student data request
   useEffect(() => {
@@ -44,11 +54,9 @@ const ManagerStudentList = () => {
   const showModal = () => {
     setIsModalVisible(true);
   };
-
   const handleOk = () => {
     setIsModalVisible(false);
   };
-
   const handleCancel = () => {
     setIsModalVisible(false);
   };
@@ -57,6 +65,7 @@ const ManagerStudentList = () => {
   const onChange = debounce((event) => {
     onSearch(event.target.value);
   }, 1000);
+
   //manual search feature
   const onSearch = (value) => {
     searchStudentByName(value)
@@ -75,19 +84,45 @@ const ManagerStudentList = () => {
     // setStudentData(searchData);
   };
 
-  //add student
-  const addStudent = (values) => {
-    setEditingStudent(null);
-    console.log(editingStudent);
+  //add student feature
+  const addStudentHandler = (values) => {
+    addStudent(values)
+      .then((response) => {
+        if (response.status === 201) {
+          setStudentData([...studentData, response.data.data.student]);
+          setIsModalVisible(false);
+        } else {
+          alert("Error, try it later");
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
-  //edit feature
-  const editRecordHandler = (value) => {
-    setEditingStudent(value);
-    console.log(editingStudent);
+  //edit student feature
+  const editStudentHandler = (values) => {
+    editStudent(values)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response);
+          const index = studentData.findIndex((item) => item.id === values.id);
+          studentData[index] = {
+            key: response.data.data.id,
+            ...response.data.data,
+          };
+          setStudentData([...studentData]);
+          setIsModalVisible(false);
+        } else {
+          alert("Error, try it later");
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
-  //delete student
+  //delete student feature
   const deleteRecordHandler = (id) => {
     deleteStudent(id).then((response) => {
       // console.log(response);
@@ -197,7 +232,7 @@ const ManagerStudentList = () => {
         <Space size="middle">
           <a
             onClick={() => {
-              editRecordHandler(record);
+              setEditingStudent(record);
               showModal();
               // setEditingStudent(record);
               // console.log(editingStudent);
@@ -220,39 +255,64 @@ const ManagerStudentList = () => {
 
   return (
     <Content>
-      <div>
-        <Button
-          onClick={() => {
-            addStudent();
-            showModal();
-          }}
-          type="primary"
-          style={{
-            marginBottom: 16,
-          }}
-        >
-          + Add
-        </Button>
+      <Button
+        onClick={() => {
+          showModal();
+          setEditingStudent(null);
+        }}
+        type="primary"
+        style={{
+          marginBottom: 16,
+        }}
+      >
+        + Add
+      </Button>
 
-        <Space direction="vertical" style={{ float: "right" }}>
-          <Search
-            placeholder="Search by name"
-            onSearch={onSearch}
-            onChange={onChange}
-            style={{ width: 200 }}
-          />
-        </Space>
-      </div>
+      <Space direction="vertical" style={{ float: "right" }}>
+        <Search
+          placeholder="Search by name"
+          onSearch={onSearch}
+          onChange={onChange}
+          style={{ width: 200 }}
+        />
+      </Space>
+
       <Modal
         title={!!editingStudent ? "Edit Student" : "Add Student"}
         centered
         visible={isModalVisible}
-        onOk={handleOk}
+        destroyOnClose={true}
         onCancel={handleCancel}
+        // afterClose={() => form.resetFields()}
+        footer={[
+          <Button
+            key="submit"
+            type="primary"
+            // pass the form inside modal out to let the button work
+            onClick={() => form?.submit()}
+          >
+            {!!editingStudent ? "Update" : "Add"}
+          </Button>,
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>,
+        ]}
       >
-        <AddStudentForm
-        // form={form}
-        // editingStudent={editingStudent}
+        <ManipulateStudentForm
+          setForm={setForm}
+          editingStudent={editingStudent}
+          onSubmit={!!editingStudent ? editStudentHandler : addStudentHandler}
+          // onFinish={(student) => {
+          //   if (!!editingStudent) {
+          //     const index = data.findIndex((item) => item.id === student.id);
+
+          //     data[index] = student;
+          //     setStudentData([...data]);
+          //   }
+
+          //   setIsModalVisible(false);
+          // }}
+          // studentData={editingStudent}
         />
       </Modal>
       <Table

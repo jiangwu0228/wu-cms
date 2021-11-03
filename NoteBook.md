@@ -72,3 +72,36 @@ Local storage router.quere
 
 "data-fns" to format data
 
+
+
+### Do we need useMemo and useCallback?
+
+###### Which situation will re-render component?
+
+1. Component  state change 
+
+2. Props from parent component change
+3. Parent component re-render
+
+###### useMemo scenario
+
+if we do have complex calculate that we can call useMemo caching this.
+
+Only if dependency change that will re-calculate instaad fo every re-render component
+
+###### useCallback scenario
+
+1. Child component will re-render every time if we don't use useCallback when we need pass function to child component.
+2. when we need debounce and throttle
+
+
+
+##### Personal point of view
+
+Use that hooks when we need high performance.
+
+
+
+
+
+After I add 
