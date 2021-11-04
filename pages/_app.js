@@ -4,6 +4,7 @@ import StudentDashboard from "../components/layout/dashboard/studentDashboard";
 import TeacherDashboard from "../components/layout/dashboard/teacherDashboard";
 
 import "../styles/globals.css";
+import "antd/dist/antd.css";
 
 function MyApp({ Component, pageProps, router }) {
   const manager = router.pathname.startsWith("/dashboard/manager");

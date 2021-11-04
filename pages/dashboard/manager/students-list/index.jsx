@@ -1,7 +1,7 @@
 //# sourceURL=dynamicScript.js
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { debounce } from "lodash";
+import { debounce, throttle } from "lodash";
 import { formatDistanceToNow } from "date-fns";
 
 import {
@@ -54,17 +54,17 @@ const ManagerStudentList = () => {
   const showModal = () => {
     setIsModalVisible(true);
   };
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
   //on change debounce to prevent multiple request
-  const onChange = debounce((event) => {
+  //don't use throttle because it will make the request too fast
+  //don't need callback because we don't need to do anything after the request
+  const onChange = (event) => {
     onSearch(event.target.value);
-  }, 1000);
+  };
 
   //manual search feature
   const onSearch = (value) => {
@@ -89,7 +89,7 @@ const ManagerStudentList = () => {
     addStudent(values)
       .then((response) => {
         if (response.status === 201) {
-          setStudentData([...studentData, response.data.data.student]);
+          setStudentData([...studentData, response.data.data]);
           setIsModalVisible(false);
         } else {
           alert("Error, try it later");
@@ -167,7 +167,7 @@ const ManagerStudentList = () => {
       sortDirections: ["ascend", "descend"],
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
-        <Link href={`students-list/${record.id}`}>{record.name}</Link>
+        <Link href={`students-list/${record?.id}`}>{record?.name}</Link>
       ),
     },
     {

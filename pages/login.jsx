@@ -8,7 +8,6 @@ import { login } from "../lib/services/api-services";
 import styled from "styled-components";
 import { Form, Input, Radio, Checkbox, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import "antd/dist/antd.css";
 
 const FormWrap = styled.div`
   max-width: 30%;

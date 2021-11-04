@@ -2,7 +2,19 @@ import storage from "./storage";
 import axios from "axios";
 import { AES } from "crypto-js";
 
+const instance = axios.create({
+  baseURL: 'https://cms.chtoma.com/api',
+  timeout: 1000,
+  headers: {"Authorization": `Bearer ${storage.token}`}
+});
+
 const baseUrl = "https://cms.chtoma.com/api";
+const headers = {
+  "Content-Type": "application/json",
+  "X-Requested-With": "XMLHttpRequest",
+  "Authorization": `Bearer ${storage.token}`,
+};
+
 
 export function login(values) {
   return axios({

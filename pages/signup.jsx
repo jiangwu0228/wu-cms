@@ -6,7 +6,6 @@ import { useRouter } from "next/dist/client/router";
 import { signup } from "../lib/services/api-services";
 
 import styled from "styled-components";
-import "antd/dist/antd.css";
 import { UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Radio } from "antd";
 

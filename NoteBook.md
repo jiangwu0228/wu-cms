@@ -102,6 +102,12 @@ Use that hooks when we need high performance.
 
 
 
+When I click add button all page will re-render
 
+After I add one and click the last page button, will say error.
 
-After I add 
+if it's not server error or we can say backend give some error can use if else alert err
+
+import "antd/dist/antd.css";
+
+Intercerpter

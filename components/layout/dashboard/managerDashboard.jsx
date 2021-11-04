@@ -23,6 +23,7 @@ import {
   DeploymentUnitOutlined,
   EditOutlined,
   UnorderedListOutlined,
+  LoginOutlined,
 } from "@ant-design/icons";
 // import StudentList from "../../dashboard/sider/studentList";
 
@@ -93,7 +94,12 @@ const ManagerDashboard = ({ children }) => {
   };
 
   const logout = () => {
-    return <a onClick={logoutRequest}>logout</a>;
+    return (
+      <button>
+        <LoginOutlined />
+        <a onClick={logoutRequest}>logout</a>
+      </button>
+    );
   };
 
   return (
