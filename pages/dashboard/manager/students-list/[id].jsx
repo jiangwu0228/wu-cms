@@ -1,11 +1,12 @@
 import React from 'react';
+import DashboardLayout from '../../../../components/layout/dashboard/dashboardLayout';
 
 
 const StudentId = () => {
     return (
-        <div>
+        <DashboardLayout>
             this is student id
-        </div>
+        </DashboardLayout>
     );
 }
 

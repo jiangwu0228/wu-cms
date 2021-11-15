@@ -5,151 +5,84 @@ import { debounce, throttle } from "lodash";
 import { formatDistanceToNow } from "date-fns";
 
 import {
-  getStudentList,
+  getStudents,
   deleteStudent,
   addStudent,
   editStudent,
-  searchStudentByName,
-} from "../../../../lib/services/api-services";
+} from "../../../../pages/api/api-services";
 import ManipulateStudentForm from "../../../../components/dashboard/common/manipulateStudentForm";
+import DashboardLayout from "../../../../components/layout/dashboard/dashboardLayout";
 
-import {
-  Table,
-  Space,
-  Button,
-  Search,
-  Input,
-  Modal,
-  Popconfirm,
-  Form,
-} from "antd";
-import { Content } from "antd/lib/layout/layout";
-import { useForm } from "antd/lib/form/Form";
+import { Table, Space, Button, Input, Modal, Popconfirm } from "antd";
 
 const ManagerStudentList = () => {
-  const [studentData, setStudentData] = useState(null);
-  const [pageSize, setPageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsData, setStudentsData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [paginator, setPaginator] = useState({ page: 1, limit: 10 });
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-
+  const [query, setQuery] = useState("");
   const [form, setForm] = useState(null);
 
-  // const [form] = Form.useForm();
   const { Search } = Input;
 
-  //get all student data request
+  const getStudentsHandler = useCallback(async () => {
+    setIsLoading(true);
+    const res = await getStudents(paginator.page, paginator.limit, query);
+    setStudentsData(res.data.students);
+    setTotal(res.data.total);
+    setIsLoading(false);
+  }, [paginator, query]);
+
   useEffect(() => {
-    getStudentList(1, 500).then((response) => {
-      if (response.status === 200) {
-        setStudentData(response.data.data.students);
-      } else {
-        alert("Error, try it later");
-      }
-      // console.log(response);
-    });
-  }, []);
-
-  //add/edit modal
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+    getStudentsHandler();
+  }, [getStudentsHandler]);
 
   //on change debounce to prevent multiple request
   //don't use throttle because it will make the request too fast
   //don't need callback because we don't need to do anything after the request
-  const onChange = (event) => {
-    onSearch(event.target.value);
-  };
-
-  //manual search feature
-  const onSearch = (value) => {
-    searchStudentByName(value)
-      .then((response) => {
-        if (response.status === 200) {
-          setStudentData(response.data.data.students);
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
-    //this is feature sort by name in local data
-    // const searchData = studentData.filter((student) => {
-    //   return student.name.toLowerCase().includes(value.toLowerCase());
-    // });
-    // setStudentData(searchData);
-  };
+  const onChange = debounce((event) => {
+    setQuery(event.target.value);
+  }, 1000);
 
   //add student feature
-  const addStudentHandler = (values) => {
-    addStudent(values)
-      .then((response) => {
-        if (response.status === 201) {
-          setStudentData([...studentData, response.data.data]);
-          setIsModalVisible(false);
-        } else {
-          alert("Error, try it later");
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
+  const addStudentHandler = async (values) => {
+    const res = await addStudent(values);
+    if (!!res) {
+      setStudentsData([...studentsData, res.data]);
+      setIsModalVisible(false);
+    }
   };
 
   //edit student feature
-  const editStudentHandler = (values) => {
-    editStudent(values)
-      .then((response) => {
-        if (response.status === 200) {
-          console.log(response);
-          const index = studentData.findIndex((item) => item.id === values.id);
-          studentData[index] = {
-            key: response.data.data.id,
-            ...response.data.data,
-          };
-          setStudentData([...studentData]);
-          setIsModalVisible(false);
-        } else {
-          alert("Error, try it later");
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
+  const editStudentHandler = async (values) => {
+    const res = await editStudent(values);
+    if (!!res) {
+      const index = studentsData.findIndex((item) => item.id === values.id);
+      studentsData[index] = {
+        key: res.data.id,
+        ...res.data,
+      };
+      setStudentsData([...studentsData]);
+      setIsModalVisible(false);
+    }
   };
 
   //delete student feature
-  const deleteRecordHandler = (id) => {
-    deleteStudent(id).then((response) => {
-      // console.log(response);
-      if (response.status === 200) {
-        // //refresh table via api
-        // getStudentList(1, 500).then((response) => {
-        //   setStudentData(response.data.data.students);
-        // } );
-        //or update table by local data
-        //copy student data
-        const newStudentData = [...studentData];
-        //find index of student
-        const index = newStudentData.findIndex((student) => student.id === id);
-        //remove student from array
-        newStudentData.splice(index, 1);
-        //update student data
-        setStudentData(newStudentData);
-      } else {
-        console.log("error, delete fail");
-      }
-    });
-  };
-
-  //pagination feature
-  const onShowSizeChange = (current, size) => {
-    setPageSize(size);
-    setCurrentPage(current);
+  const deleteRecordHandler = async (id) => {
+    const res = await deleteStudent(id);
+    if (!!res) {
+      const newStudentData = [...studentsData];
+      //find index of student
+      const index = newStudentData.findIndex((student) => student.id === id);
+      //remove student from array
+      newStudentData.splice(index, 1);
+      //update student data
+      setStudentsData(newStudentData);
+    } else {
+      console.log("error, delete fail");
+    }
   };
 
   //data and feature in table
@@ -158,6 +91,7 @@ const ManagerStudentList = () => {
       title: "No.",
       dataIndex: "index",
       key: "index",
+      width: "5%",
       render: (_1, _2, index) => index + 1,
     },
     {
@@ -233,9 +167,7 @@ const ManagerStudentList = () => {
           <a
             onClick={() => {
               setEditingStudent(record);
-              showModal();
-              // setEditingStudent(record);
-              // console.log(editingStudent);
+              setIsModalVisible(true);
             }}
           >
             Edit
@@ -254,10 +186,10 @@ const ManagerStudentList = () => {
   ];
 
   return (
-    <Content>
+    <DashboardLayout>
       <Button
         onClick={() => {
-          showModal();
+          setIsModalVisible(true);
           setEditingStudent(null);
         }}
         type="primary"
@@ -271,7 +203,7 @@ const ManagerStudentList = () => {
       <Space direction="vertical" style={{ float: "right" }}>
         <Search
           placeholder="Search by name"
-          onSearch={onSearch}
+          onSearch={(value) => setQuery(value)}
           onChange={onChange}
           style={{ width: 200 }}
         />
@@ -282,8 +214,9 @@ const ManagerStudentList = () => {
         centered
         visible={isModalVisible}
         destroyOnClose={true}
-        onCancel={handleCancel}
-        // afterClose={() => form.resetFields()}
+        onCancel={() => {
+          setIsModalVisible(false);
+        }}
         footer={[
           <Button
             key="submit"
@@ -293,7 +226,12 @@ const ManagerStudentList = () => {
           >
             {!!editingStudent ? "Update" : "Add"}
           </Button>,
-          <Button key="cancel" onClick={handleCancel}>
+          <Button
+            key="cancel"
+            onClick={() => {
+              setIsModalVisible(false);
+            }}
+          >
             Cancel
           </Button>,
         ]}
@@ -302,30 +240,24 @@ const ManagerStudentList = () => {
           setForm={setForm}
           editingStudent={editingStudent}
           onSubmit={!!editingStudent ? editStudentHandler : addStudentHandler}
-          // onFinish={(student) => {
-          //   if (!!editingStudent) {
-          //     const index = data.findIndex((item) => item.id === student.id);
-
-          //     data[index] = student;
-          //     setStudentData([...data]);
-          //   }
-
-          //   setIsModalVisible(false);
-          // }}
-          // studentData={editingStudent}
         />
       </Modal>
       <Table
         columns={columns}
-        dataSource={studentData}
+        dataSource={studentsData}
+        loading={isLoading}
         pagination={{
-          defaultCurrent: currentPage,
-          pageSize: pageSize,
-          onShowSizeChange,
+          current: paginator.page,
+          pageSize: paginator.limit,
+          showSizeChanger: true,
+          total,
+          onChange: (page, pageSize) => {
+            setPaginator({ page, limit: pageSize });
+          },
         }}
         scroll={{ y: "max-content" }}
       />
-    </Content>
+    </DashboardLayout>
   );
 };
 

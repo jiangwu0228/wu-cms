@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 
-import { login } from "../lib/services/api-services";
+import { login } from "../pages/api/api-services";
+import storage from "../lib/services/storage";
 
 import styled from "styled-components";
 import { Form, Input, Radio, Checkbox, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import HomeLayout from "../components/layout/home/HomeLayout";
 
 const FormWrap = styled.div`
   max-width: 30%;
@@ -31,24 +33,16 @@ const Login = () => {
     manager: "manager",
   };
 
-  const onFinish = (values) => {
-    login(values)
-      .then(function (response) {
-        if (response.status === 201) {
-          if (values.remember === true) {
-            //how to set time out
-          }
-          localStorage.setItem("myAuth", response.data.data.token);
-          router.push(`/dashboard/${values.role}`);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  const onFinish = async (values) => {
+    const res = await login(values);
+    if (!!res) {
+      storage.setUserInfo(res.data);
+      router.push(`/dashboard/${res.data.role}`); 
+    }
   };
 
   return (
-    <>
+    <HomeLayout>
       <Head>
         <title>Login</title>
         <link rel="icon" href="/favicon.ico" />
@@ -126,7 +120,7 @@ const Login = () => {
           No account? <Link href="/signup">Sign Up</Link>
         </span>
       </FormWrap>
-    </>
+    </HomeLayout>
   );
 };
 

@@ -3,7 +3,8 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 
-import { signup } from "../lib/services/api-services";
+import { signup } from "../pages/api/api-services";
+import HomeLayout from "../components/layout/home/HomeLayout";
 
 import styled from "styled-components";
 import { UserOutlined } from "@ant-design/icons";
@@ -31,22 +32,16 @@ function SignUp() {
     manager: "manager",
   };
 
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-    signup(values)
-      .then(function (response) {
-        console.log(response.status)
-        if (response.status === 201) {
-          router.push("/login");
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  const onFinish = async (values) => {
+    const res = await signup(values);
+    if (!!res) {
+      console.log(res);
+      router.push("/login");
+    }
   };
 
   return (
-    <>
+    <HomeLayout>
       <Head>
         <title>Sign Up</title>
         <link rel="icon" href="/favicon.ico" />
@@ -55,22 +50,17 @@ function SignUp() {
       <Heading>Sign up your account</Heading>
 
       <FormWrap>
-        <Form
-          layout="vertical"
-          form={form}
-          name="register"
-          onFinish={onFinish}
-        >
+        <Form layout="vertical" form={form} name="register" onFinish={onFinish}>
           <Form.Item
             name="role"
             label="Role"
             initialValue={Role.student}
-            rules={[{required: true}]}
+            rules={[{ required: true }]}
           >
-            <Radio.Group >
-              <Radio value={'student'}>Student</Radio>
-              <Radio value={'teacher'}>Teacher</Radio>
-              <Radio value={'manager'}>Manager</Radio>
+            <Radio.Group>
+              <Radio value={"student"}>Student</Radio>
+              <Radio value={"teacher"}>Teacher</Radio>
+              <Radio value={"manager"}>Manager</Radio>
             </Radio.Group>
           </Form.Item>
 
@@ -88,10 +78,7 @@ function SignUp() {
               },
             ]}
           >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Email"
-            />
+            <Input prefix={<UserOutlined />} placeholder="Email" />
           </Form.Item>
 
           <Form.Item
@@ -149,7 +136,7 @@ function SignUp() {
           Already have an account? <Link href="/login">Login</Link>
         </span>
       </FormWrap>
-    </>
+    </HomeLayout>
   );
 }
 

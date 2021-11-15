@@ -2,10 +2,11 @@ import React from "react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import storage from "../../../lib/services/storage";
+import {logout}  from "../../../pages/api/api-services";
 
 import styled from "styled-components";
+import { managerMenuConfig } from "../../../lib/config/menuConfig";
 
 import "antd/dist/antd.css";
 import { Layout, Menu, Breadcrumb, Avatar, Badge, Popover } from "antd";
@@ -13,19 +14,9 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
-  DashboardOutlined,
-  TeamOutlined,
-  SolutionOutlined,
-  ReadOutlined,
-  MessageOutlined,
-  FileAddOutlined,
   BellOutlined,
-  DeploymentUnitOutlined,
-  EditOutlined,
-  UnorderedListOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
-// import StudentList from "../../dashboard/sider/studentList";
 
 //style
 const Logo = styled.div`
@@ -63,42 +54,49 @@ const HeaderIcon = styled.div`
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const ManagerDashboard = ({ children }) => {
+const getMenuConfig = (menu) => {
+  const baseUrl = "/dashboard/manager";
+  return menu.map((item) => {
+    if (item.children) {
+      return (
+        <SubMenu key={item.title} title={item.title} icon={item.icon}>
+          {getMenuConfig(item.children)}
+        </SubMenu>
+      );
+    } else {
+      return (
+        <Menu.Item key={item.title} icon={item.icon}>
+          <Link href={`${baseUrl}${item?.path}`}>{item.title}</Link>
+        </Menu.Item>
+      );
+    }
+  });
+};
+
+// const menu = getMenuConfig(managerMenuConfig);
+
+const DashboardLayout = ({ children }) => {
   const router = useRouter();
-  // const { pathname } = useRouter();
-  // const manager = pathname.startsWith("/dashboard/manager");
-  // const student = pathname.startsWith("/dashboard/student");
-  // const teacher = pathname.startsWith("/dashboard/teacher");
-  const baseUrl = "/dashboard/manager/";
   const [collapsed, toggleCollapse] = useState(false);
   const toggle = () => {
     toggleCollapse(!collapsed);
   };
 
   //logout
-  const logoutRequest = () => {
-    axios({
-      method: "post",
-      url: "https://cms.chtoma.com/api/logout",
-      headers: { Authorization: `Bearer ${storage.token}` },
-    })
-      .then((response) => {
-        if (response.status === 201) {
-          localStorage.clear();
-          router.push("/login");
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  const logoutRequest = async() => {
+    const res =  await logout();
+    if (res.code == 201) {
+      storage.deleteUserInfo();
+      router.push("/login");
+    }
   };
 
-  const logout = () => {
+  const logoutLabel = () => {
     return (
-      <button>
+      <>
         <LoginOutlined />
         <a onClick={logoutRequest}>logout</a>
-      </button>
+      </>
     );
   };
 
@@ -123,72 +121,7 @@ const ManagerDashboard = ({ children }) => {
         </Logo>
 
         <Menu theme="dark" defaultSelectedKeys={["overview"]} mode="inline">
-          <Menu.Item
-            key="overview"
-            icon={<DashboardOutlined />}
-            onClick={() => router.push(baseUrl)}
-          >
-            Overview
-          </Menu.Item>
-
-          <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
-            <Menu.Item
-              key="studentList"
-              icon={<TeamOutlined />}
-              onClick={() => router.push(baseUrl + "students-list")}
-            >
-              Student List
-            </Menu.Item>
-          </SubMenu>
-          {/* <StudentList/> */}
-
-          <SubMenu
-            key="teacher"
-            icon={<DeploymentUnitOutlined />}
-            title="Teacher"
-          >
-            <Menu.Item
-              key="teacherList"
-              icon={<TeamOutlined />}
-              onClick={() => router.push(baseUrl + "teacher-list")}
-            >
-              Teacher List
-            </Menu.Item>
-          </SubMenu>
-
-          <SubMenu key="course" icon={<ReadOutlined />} title="Course">
-            <Menu.Item
-              key="allCourse"
-              icon={<UnorderedListOutlined />}
-              onClick={() => router.push(baseUrl + "course")}
-            >
-              All Course
-            </Menu.Item>
-
-            <Menu.Item
-              key="addCourse"
-              icon={<FileAddOutlined />}
-              onClick={() => router.push(baseUrl + "course/addCourse")}
-            >
-              Add Course
-            </Menu.Item>
-
-            <Menu.Item
-              key="editCourse"
-              icon={<EditOutlined />}
-              onClick={() => router.push(baseUrl + "course/editCourse")}
-            >
-              Edit Course
-            </Menu.Item>
-          </SubMenu>
-
-          <Menu.Item
-            key="message"
-            icon={<MessageOutlined />}
-            onClick={() => router.push(baseUrl + "message")}
-          >
-            Message
-          </Menu.Item>
+          {getMenuConfig(managerMenuConfig)}
         </Menu>
       </Sider>
 
@@ -220,7 +153,7 @@ const ManagerDashboard = ({ children }) => {
               />
             </Badge>
 
-            <Popover placement="bottomRight" content={logout}>
+            <Popover placement="bottomRight" content={logoutLabel}>
               <Avatar
                 icon={<UserOutlined />}
                 style={{ margin: "0 0 0 2.5rem" }}
@@ -248,4 +181,4 @@ const ManagerDashboard = ({ children }) => {
   );
 };
 
-export default ManagerDashboard;
+export default DashboardLayout;

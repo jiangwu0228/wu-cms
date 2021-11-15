@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import styled from 'styled-components';
+import HomeLayout from '../components/layout/home/HomeLayout';
 
 const Main = styled.div`
   height: 90vh;
@@ -17,7 +18,7 @@ const Heading = styled.h1`
 
 export default function Home() {
   return (
-    <>
+    <HomeLayout>
       <Head>
         <title>Home</title>
         <link rel='icon' href='/favicon.ico' />
@@ -25,6 +26,6 @@ export default function Home() {
       <Main>
         <Heading>NEXT</Heading>
       </Main>
-    </>
+    </HomeLayout>
   );
 }

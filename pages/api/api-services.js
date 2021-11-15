@@ -1,103 +1,144 @@
-import storage from "./storage";
+import storage from "../../lib/services/storage";
 import axios from "axios";
+import { message } from "antd";
 import { AES } from "crypto-js";
 
-const instance = axios.create({
-  baseURL: 'https://cms.chtoma.com/api',
-  timeout: 1000,
-  headers: {"Authorization": `Bearer ${storage.token}`}
+// token = storage.get("token");
+// role = storage.get("role");
+// userId = storage.get("userId");
+
+const axiosInstance = axios.create({
+  baseURL: "https://cms.chtoma.com/api",
+  responseType: "json",
 });
 
-const baseUrl = "https://cms.chtoma.com/api";
-const headers = {
-  "Content-Type": "application/json",
-  "X-Requested-With": "XMLHttpRequest",
-  "Authorization": `Bearer ${storage.token}`,
+//handler normal request
+axiosInstance.interceptors.request.use((config) => {
+  if (!config.url.includes("login" || "signup")) {
+    return {
+      ...config,
+      headers: {
+        ...config.headers,
+        Authorization: "Bearer " + storage?.token,
+      },
+    };
+  }
+  return config;
+});
+
+//handler normal response
+axiosInstance.interceptors.response.use(
+  (res) => {
+    if (
+      res.data.code.toString().startsWith("2") ||
+      code.toString().startsWith("3")
+    ) {
+      return res.data;
+    } else {
+      message.error(res.data.msg);
+    }
+  },
+  (err) => {
+    const msg = err.response.data.msg;
+    const code = err.response.status;
+    message.error(msg);
+    return Promise.reject({ meg, code });
+  }
+);
+
+//handler normal error(no response)
+const errorHandler = (err) => {
+  console.error(err);
 };
 
-
-export function login(values) {
-  return axios({
-    method: "post",
-    url: `${baseUrl}/login`,
-    data: {
+export const login = async (values) => {
+  try {
+    const res = await axiosInstance.post("/login", {
       email: values.email,
-      password: AES.encrypt(values.password, "cms").toString(),
+      password: AES.encrypt(values.password, storage.key).toString(),
       role: values.role,
-    },
-  });
-}
+    });
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
 
-export function signup(values) {
-  return axios({
-    method: "post",
-    url: `${baseUrl}/signup`,
-    data: {
+export const logout = async () => {
+  try {
+    const res = await axiosInstance.post("/logout");
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const signup = async (values) => {
+  try {
+    const res = await axiosInstance.post("/signup", {
       email: values.email,
       password: values.password,
       role: values.role,
-    },
-  });
-}
+    });
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
 
-export function logout() {
-  return axios({
-    method: "post",
-    url: "https://cms.chtoma.com/api/logout",
-    headers: { Authorization: `Bearer ${storage.token}` },
-  });
-}
+export const getStudents = async (page, limit, query, userId) => {
+  try {
+    const res = await axiosInstance.get("/students", {
+      params: {
+        page: page,
+        limit: limit,
+        query: query,
+        userId: userId,
+      },
+    });
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
 
-export function getStudentList(page, limit) {
-  return axios({
-    method: "get",
-    url: `${baseUrl}/students?page=${page}&limit=${limit}`,
-    headers: { Authorization: `Bearer ${storage.token}` },
-  });
-}
-
-//in this time will set page and limit to 1 and 500
-export function searchStudentByName(name) {
-  return axios({
-    method: "get",
-    url: `${baseUrl}/students?query=${name}&page=1&limit=500`,
-    headers: { Authorization: `Bearer ${storage.token}` },
-  });
-}
-
-export function addStudent(values) {
-  return axios({
-    method: "post",
-    url: `${baseUrl}/students`,
-    headers: { Authorization: `Bearer ${storage.token}` },
-    data: {
+export const addStudent = async (values) => {
+  try {
+    const res = await axiosInstance.post("/students", {
       name: values.name,
       email: values.email,
       country: values.country,
       type: values.type,
-    },
-  });
-}
+    });
+    message.success(res.msg);
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
 
-export function editStudent(values) {
-  return axios({
-    method: "put",
-    url: `${baseUrl}/students`,
-    headers: { Authorization: `Bearer ${storage.token}` },
-    data: {
+export const editStudent = async (values) => {
+  try {
+    const res = await axiosInstance.put("/students", {
       id: values.id,
       name: values.name,
       email: values.email,
       country: values.country,
       type: values.type,
-    },
-  });
-}
+    });
+    message.success(res.msg);
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
 
-export function deleteStudent(id) {
-  return axios({
-    method: "delete",
-    url: `${baseUrl}/students/${id}`,
-    headers: { Authorization: `Bearer ${storage.token}` },
-  });
-}
+export const deleteStudent = async (id) => {
+  try {
+    const res = await axiosInstance.delete(`/students/${id}`);
+    message.success(res.msg);
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
