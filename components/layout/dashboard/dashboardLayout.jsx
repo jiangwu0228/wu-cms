@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { managerMenuConfig } from "../../../lib/config/menuConfig";
 
 import "antd/dist/antd.css";
-import { Layout, Menu, Breadcrumb, Avatar, Badge, Popover } from "antd";
+import { Layout, Menu, Avatar, Badge, Popover, Breadcrumb } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -17,6 +17,7 @@ import {
   BellOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
+import BreadCrumb from "../../common/breadcrumb";
 
 //style
 const Logo = styled.div`
@@ -162,10 +163,7 @@ const DashboardLayout = ({ children }) => {
           </HeaderRight>
         </Header>
         {/* bread crumb nav*/}
-        <Breadcrumb style={{ margin: "16px 16px 0" }}>
-          <Breadcrumb.Item>User</Breadcrumb.Item>
-          <Breadcrumb.Item>Bill</Breadcrumb.Item>
-        </Breadcrumb>
+            <BreadCrumb></BreadCrumb>
         {/* content */}
         <Content
           className="site-layout-background"

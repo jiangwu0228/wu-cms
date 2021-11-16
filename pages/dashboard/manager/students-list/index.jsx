@@ -10,7 +10,7 @@ import {
   addStudent,
   editStudent,
 } from "../../../../pages/api/api-services";
-import ManipulateStudentForm from "../../../../components/dashboard/common/manipulateStudentForm";
+import ManipulateStudentForm from "../../../../components/common/manipulateStudentForm";
 import DashboardLayout from "../../../../components/layout/dashboard/dashboardLayout";
 
 import { Table, Space, Button, Input, Modal, Popconfirm } from "antd";

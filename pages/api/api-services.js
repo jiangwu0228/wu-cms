@@ -3,10 +3,6 @@ import axios from "axios";
 import { message } from "antd";
 import { AES } from "crypto-js";
 
-// token = storage.get("token");
-// role = storage.get("role");
-// userId = storage.get("userId");
-
 const axiosInstance = axios.create({
   baseURL: "https://cms.chtoma.com/api",
   responseType: "json",
