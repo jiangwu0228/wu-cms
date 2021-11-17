@@ -138,3 +138,27 @@ export const deleteStudent = async (id) => {
     errorHandler(err);
   }
 };
+
+export const getCourses = async (page) => {
+  try {
+    const res = await axiosInstance.get("/courses", {
+      params: {
+        page: page,
+        limit: 20,
+      },
+    });
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+}
+
+
+export const courseDetail = async (id) => {
+  try {
+    const res = await axiosInstance.get(`/courses/${id}`);
+    return res;
+  } catch (err) {
+    errorHandler(err);
+  }
+}

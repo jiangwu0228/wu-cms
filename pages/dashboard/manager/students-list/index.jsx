@@ -1,7 +1,7 @@
 //# sourceURL=dynamicScript.js
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { debounce, throttle } from "lodash";
+import { debounce } from "lodash";
 import { formatDistanceToNow } from "date-fns";
 
 import {

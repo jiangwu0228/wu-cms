@@ -111,3 +111,15 @@ if it's not server error or we can say backend give some error can use if else a
 import "antd/dist/antd.css";
 
 Intercerpter
+
+// 17/ Nov 2021
+all course tab:
+1. A new function (AllCourses) return a List with antd component.
+2. Add api get all course with page and limit.
+3. Fatch data in AllCourses.
+4. Bulid single course card component.
+5. Render courseCard component and inject to every single course card component.
+6. Add infinite scroll feature.
+
+problems:
+1. use Link in cuursesCard component will throw error.
