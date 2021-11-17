@@ -16,11 +16,12 @@ const AllCourses = () => {
   const loadMoreData = async () => {
     const res = await getCourses(paginator + 1);
     if (!!res) {
-      res.data.courses.map((course) => {
+      res.courses.forEach((course) => {
         setData((data) => [...data, course]);
       });
-      setPaginator(res.data.paginator.page);
-      setTotal(res.data.total);
+      // setData(...data, res.data.courses)
+      setPaginator(res.paginator.page);
+      setTotal(res.total);
     }
   };
 

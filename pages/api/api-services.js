@@ -98,6 +98,15 @@ export const getStudents = async (page, limit, query, userId) => {
   }
 };
 
+export const getStudent = async (id) => {
+  try {
+    const res = await axiosInstance.get("/students/" + id);
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
 export const addStudent = async (values) => {
   try {
     const res = await axiosInstance.post("/students", {
@@ -147,7 +156,7 @@ export const getCourses = async (page) => {
         limit: 20,
       },
     });
-    return res;
+    return res.data;
   } catch (err) {
     errorHandler(err);
   }

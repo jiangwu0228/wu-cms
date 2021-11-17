@@ -43,6 +43,9 @@ const CourseCard = (props) => {
         {/* <Link href={`/course/${props.id}`}>this course</Link> */}
         <a href={`/dashboard/${storage.role}/course/${props.id}`}>Read More</a>
       </Button>
+      {/* <Link href={`/course/${props.id}`}>
+        <Button>read</Button>
+      </Link> */}
     </Card>
   );
 };
