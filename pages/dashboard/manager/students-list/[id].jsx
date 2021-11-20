@@ -8,6 +8,7 @@ import styled from "styled-components";
 
 import DashboardLayout from "../../../../components/layout/dashboard/dashboardLayout";
 import { getStudent } from "../../../api/api-services";
+import {programLanguageColors} from '../../../../lib/constant/config';
 
 export const getServerSideProps = async (context) => {
   const { id } = context.params;
@@ -33,23 +34,40 @@ const StudentId = (studentId) => {
   const router = useRouter();
   const id = router.query.id || studentId;
   const [student, setStudent] = useState({});
+  const [info, setInfo] = useState([]);
+  const [about, setAbout] = useState([]);
   const [activeTabKey, setActiveTabKey] = useState("about");
 
   const onTabChange = (key) => {
     setActiveTabKey(key);
   };
 
-  //get student data by id
-  const Data = async () => {
-    const res = await getStudent(id);
-    if (res) setStudent(res);
-  };
-
   //load data on component mount
   useEffect(() => {
-    Data();
+    (async () => {
+      const res = await getStudent(id);
+      if (res) {
+        const info = [
+          {label: 'Name', value: res.name},
+          {label: 'Age', value: res.age},
+          {label: 'Email', value: res.email},
+          {label: 'Phone', value: res.phone},
+        ]
+        const about = [
+          { label: 'Eduction', value: res.education },
+          { label: 'Area', value: res.country },
+          { label: 'Gender', value: res.gender === 1 ? 'Male' : 'Female' },
+          { label: 'Member Period', value: res.memberStartAt + ' - ' + res.memberEndAt },
+          { label: 'Type', value: res.type.name },
+          { label: 'Create Time', value: res.ctime },
+          { label: 'Update Time', value: res.updateAt },
+        ];
+        setInfo(info);
+        setAbout(about);
+        setStudent(res);
+      }
+    })();
   }, []);
-  console.log(student);
 
   const columns = [
     {
@@ -85,20 +103,6 @@ const StudentId = (studentId) => {
     },
   ];
 
-  //color of tag
-  const programLanguageColors = [
-    "magenta",
-    "volcano",
-    "orange",
-    "gold",
-    "green",
-    "cyan",
-    "geekblue",
-    "purple",
-    "red",
-    "lime",
-  ];
-
   //tab content
   const contentListNoTitle = {
     about: (
@@ -106,34 +110,12 @@ const StudentId = (studentId) => {
         <H3>Information</H3>
 
         <Row gutter={[6, 16]}>
-          <Col span={24} key="Education">
-            <B>Education:</B>
-            <span>{student.education}</span>
-          </Col>
-          <Col span={24} key="Area">
-            <B>Area:</B>
-            <span>{student?.country}</span>
-          </Col>
-          <Col span={24} key="Gender">
-            <B>Gender:</B>
-            <span>{student?.gender === 1 ? "Male" : "Female"}</span>
-          </Col>
-          <Col span={24} key="Member Period">
-            <B>Member Period:</B>
-            <span>{student?.memberStartAt + " - " + student?.memberEndAt}</span>
-          </Col>
-          <Col span={24} key="Type">
-            <B>Type:</B>
-            <span>{student?.type?.name}</span>
-          </Col>
-          <Col span={24} key="Create Time">
-            <B>Create Time:</B>
-            <span>{student?.createdAt}</span>
-          </Col>
-          <Col span={24} key="Update Time">
-            <B>Update Time:</B>
-            <span>{student?.updatedAt}</span>
-          </Col>
+          {about.map((item, index) => (
+            <Col span={24} key={index}>
+              <B>{item.label}</B>
+              <span>{item.value}</span>
+            </Col>
+          ))}
         </Row>
 
         <H3>Interesting</H3>
@@ -180,30 +162,19 @@ const StudentId = (studentId) => {
             }
           >
             <Row>
-              <Col span={12} style={{ textAlign: "center" }}>
-                <b>Name</b>
-                <p>{student.name}</p>
-              </Col>
-              <Col span={12} style={{ textAlign: "center" }}>
-                <b>Age</b>
-                <p>{student.age}</p>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12} style={{ textAlign: "center" }}>
-                <b>Email</b>
-                <p>{student.email}</p>
-              </Col>
-              <Col span={12} style={{ textAlign: "center" }}>
-                <b>Phone</b>
-                <p>{student.phone}</p>
-              </Col>
+              {info.map((item) => (
+                <Col span={12} style={{ textAlign: "center" }} key={item.label}>
+                  <b>{item.label}:</b>
+                  <p>{item.value}</p>
+                </Col>
+              ))}
+
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: "center" }}>
                 <b>Address</b>
                 <p>{student.address}</p>
-              </Col>
+              </Col> 
             </Row>
           </Card>
         </Col>

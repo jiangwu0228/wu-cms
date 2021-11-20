@@ -123,3 +123,15 @@ all course tab:
 
 problems:
 1. use Link in cuursesCard component will throw error.
+
+
+// 18/ Nov 2021
+course detail tab:
+1. A new file [id].
+2. Get id from url or server.
+3. Fatch data in CourseDetail.
+4. Build courseDetail component.
+5. Render and inject data to courseDetail component.
+
+problems:
+1. semms like we can't use Object.forEntries in calender component.

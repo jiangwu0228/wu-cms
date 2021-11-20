@@ -162,11 +162,10 @@ export const getCourses = async (page) => {
   }
 }
 
-
-export const courseDetail = async (id) => {
+export const getCourse = async (id) => {
   try {
-    const res = await axiosInstance.get(`/courses/${id}`);
-    return res;
+    const res = await axiosInstance.get("/courses/detail?id=" + id);
+    return res.data;
   } catch (err) {
     errorHandler(err);
   }

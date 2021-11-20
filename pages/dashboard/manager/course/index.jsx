@@ -3,8 +3,8 @@ import DashboardLayout from "../../../../components/layout/dashboard/dashboardLa
 import { getCourses } from "../../../api/api-services";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "antd/dist/antd.css";
-import { List, Divider, Spin, BackTop } from "antd";
-
+import { List, Divider, Spin, BackTop, Button } from "antd";
+import storage from "../../../../lib/services/storage";
 
 import CourseCard from "../../../../components/common/courseCard";
 
@@ -53,7 +53,13 @@ const AllCourses = () => {
           dataSource={data}
           renderItem={(item) => (
             <List.Item key={item.id}>
-              <CourseCard {...item} />
+              <CourseCard {...item}>
+                <Button type="primary" style={{ marginTop: "10px" }}>
+                  <a href={`/dashboard/${storage.role}/course/${item.id}`}>
+                    Read More
+                  </a>
+                </Button>
+              </CourseCard>
             </List.Item>
           )}
         ></List>
