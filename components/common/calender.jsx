@@ -13,7 +13,9 @@ const Calender = (props) => {
     };
   });
 
-//   const result = [Object.fromEntries(props.data?.map((s) => s.split(" ")))];
+  // const mokeData = ["Friday 07:07:00", "Sunday 12:05:00"];
+  // const mokeData2 = [{ Friday: "07:07:00", Sunday: "12:05:00" }];
+  // const data = [Object.fromEntries(mokeData.map((s) => s.split(" ")))];
 
   const data = [
     props.data?.reduce((acc, curr) => {

@@ -29,7 +29,12 @@ const ManagerStudentList = () => {
 
   const getStudentsHandler = useCallback(async () => {
     setIsLoading(true);
-    const res = await getStudents(paginator.page, paginator.limit, query);
+    const queryInfo = {
+      page: paginator.page,
+      limit: paginator.limit,
+      query: query,
+    };
+    const res = await getStudents(queryInfo);
     setStudentsData(res.data.students);
     setTotal(res.data.total);
     setIsLoading(false);

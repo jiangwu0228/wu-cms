@@ -135,3 +135,16 @@ course detail tab:
 
 problems:
 1. semms like we can't use Object.forEntries in calender component.
+
+// 22/ Nov 2021
+1. add course tab use steps component 
+2. add manipulationCourse form component.
+
+//25 
+
+
+problems:
+1. delete teacher will show error.
+2. adjust textarea height will cover alert.
+3. dose error will re-render? 429 error?
+4. inputgroup disable the function of inner input.

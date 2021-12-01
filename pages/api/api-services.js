@@ -4,7 +4,7 @@ import { message } from "antd";
 import { AES } from "crypto-js";
 
 const axiosInstance = axios.create({
-  baseURL: "https://cms.chtoma.com/api",
+  baseURL: "http://cms.chtoma.com/api",
   responseType: "json",
 });
 
@@ -35,8 +35,8 @@ axiosInstance.interceptors.response.use(
     }
   },
   (err) => {
-    const msg = err.response.data.msg;
-    const code = err.response.status;
+    const msg = err.response.data.message;
+    const code = err.response.data.statusCode;
     message.error(msg);
     return Promise.reject({ meg, code });
   }
@@ -82,14 +82,14 @@ export const signup = async (values) => {
   }
 };
 
-export const getStudents = async (page, limit, query, userId) => {
+export const getStudents = async (values) => {
   try {
     const res = await axiosInstance.get("/students", {
       params: {
-        page: page,
-        limit: limit,
-        query: query,
-        userId: userId,
+        page: values.page,
+        limit: values.limit,
+        query: values.query,
+        userId: values.userId,
       },
     });
     return res;
@@ -160,11 +160,104 @@ export const getCourses = async (page) => {
   } catch (err) {
     errorHandler(err);
   }
-}
+};
 
 export const getCourse = async (id) => {
   try {
     const res = await axiosInstance.get("/courses/detail?id=" + id);
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const getTeachers = async (query, page, limit) => {
+  try {
+    const res = await axiosInstance.get("/teachers", {
+      params: {
+        query: query,
+        page: page,
+        limit: limit,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const getCourseTypes = async () => {
+  try {
+    const res = await axiosInstance.get("/courses/type");
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const getCourseCode = async () => {
+  try {
+    const res = await axiosInstance.get("/courses/code");
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const addCourse = async (values) => {
+  try {
+    const res = await axiosInstance.post("/courses", {
+      name: values.name,
+      teacherId: values.teacherId,
+      type: values.type,
+      uid: values.uid,
+      startTime: values.startTime,
+      price: values.price,
+      maxStudents: values.maxStudents,
+      duration: values.duration,
+      detail: values.detail,
+      cover: values.cover,
+      durationUnit: values.durationUnit,
+    });
+    message.success(res.msg);
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+}
+
+export const editSchedule = async (values) => {
+  try {
+    const res = await axiosInstance.put("/schedule", {
+      chapters: values.chapters,
+      classTime: values.classTime,
+      scheduleId: values.scheduleId,
+      courseId: values.courseId,
+    });
+    message.success(res.msg);
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+}
+
+export const editCourse = async (values) => {
+  try {
+    const res = await axiosInstance.put("/courses", {
+      id: values.id,
+      name: values.name,
+      teacherId: values.teacherId,
+      type: values.type,
+      uid: values.uid,
+      startTime: values.startTime,
+      price: values.price,
+      maxStudents: values.maxStudents,
+      duration: values.duration,
+      detail: values.detail,
+      cover: values.cover,
+      durationUnit: values.durationUnit,
+    });
+    message.success(res.msg);
     return res.data;
   } catch (err) {
     errorHandler(err);
