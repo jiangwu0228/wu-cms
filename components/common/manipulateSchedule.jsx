@@ -1,45 +1,81 @@
-import React, { useState } from "react";
-import { Row, Col, Form, Input, Button, Space, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { Row, Col, Form, Input, Button, Space, Select, TimePicker } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import moment from "moment";
+
+import { weekDays } from "../../lib/constant/config";
+import { editSchedule } from "../../pages/api/api-services";
 
 const { Option } = Select;
 
-const areas = [
-  { label: "Beijing", value: "Beijing" },
-  { label: "Shanghai", value: "Shanghai" },
-];
-
-const sights = {
-  Beijing: ["Tiananmen", "Great Wall"],
-  Shanghai: ["Oriental Pearl", "The Bund"],
-};
-
 const ScheduleForm = (props) => {
   const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Received values of form:", values);
+  //an object has key as weekday and value as true or false
+  // const [weekDays, setWeekDays] = useState((prevValues) => {
+  //   console.log("prevValues", prevValues);
+  //   return {
+  //     Monday: false,
+  //     Tuesday: false,
+  //     Wednesday: false,
+  //     Thursday: false,
+  //     Friday: false,
+  //     Saturday: false,
+  //     Sunday: false,
+  //   };
+  // });
+
+  const classWeekDays = {
+    0: "Sunday",
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
   };
 
-  const handleChange = () => {
-    form.setFieldsValue({ sights: [] });
+  const [selectedDay, setSelectedDay] = useState([]);
+
+  const onFinish = async (values) => {
+    // const { classTime, chapters } = values;
+    const classTimes = values.classTime.map((value) => {
+      return `${value.weekday} ${moment(value.time).format("HH:mm:ss")}`;
+    });
+    const chapter = values.chapters.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
+    const data = {
+      classTime: classTimes,
+      chapters: chapter,
+      scheduleId: props.courseInfo?.scheduleId,
+      courseId: props.courseInfo?.id,
+    };
+    const res = await editSchedule(data);
+    if (!!res) {
+      props.next();
+    }
+  };
+
+  const handleChange = (value) => {
+    console.log(value);
   };
 
   return (
     <Form
       form={form}
-      name="dynamic_form_nest_item"
+      name="schedule"
       onFinish={onFinish}
       autoComplete="off"
       initialValues={{
-        users:[{first:'', last:''}],
-        sights: [{sight:'', price:''}],
+        chapters: [{ name: "", content: "" }],
+        classTime: [{ weekday: "", time: "" }],
       }}
-
     >
       <Row gutter={[6, 16]}>
         <Col span={12}>
           <h2>Chapters</h2>
-          <Form.List name="users">
+          <Form.List name="chapters">
             {(fields, { add, remove }) => (
               <>
                 {fields.map(({ key, name, fieldKey, ...restField }) => (
@@ -47,29 +83,41 @@ const ScheduleForm = (props) => {
                     <Col span={8}>
                       <Form.Item
                         {...restField}
-                        name={[name, "first"]}
-                        fieldKey={[fieldKey, "first"]}
+                        name={[name, "name"]}
+                        fieldKey={[fieldKey, "name"]}
                         rules={[
-                          { required: true, message: "Missing first name" },
+                          { required: true, message: "Missing Chapter name" },
                         ]}
                       >
-                        <Input placeholder="First Name" />
+                        <Input placeholder="Chapter Name" />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
                       <Form.Item
                         {...restField}
-                        name={[name, "last"]}
-                        fieldKey={[fieldKey, "last"]}
+                        name={[name, "content"]}
+                        fieldKey={[fieldKey, "content"]}
                         rules={[
-                          { required: true, message: "Missing last name" },
+                          {
+                            required: true,
+                            message: "Missing Chapter content",
+                          },
                         ]}
                       >
-                        <Input placeholder="Last Name" />
+                        <Input placeholder="Chapter Content" />
                       </Form.Item>
                     </Col>
                     <Col span={2}>
                       <MinusCircleOutlined onClick={() => remove(name)} />
+                    </Col>
+                    <Col style={{ display: "none" }}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "order"]}
+                        fieldKey={[fieldKey, "order"]}
+                      >
+                        <Input placeholder="Order" defaultValue={key} />
+                      </Form.Item>
                     </Col>
                   </Row>
                 ))}
@@ -94,7 +142,7 @@ const ScheduleForm = (props) => {
 
         <Col span={12}>
           <h2>Class Time</h2>
-          <Form.List name="sights">
+          <Form.List name="classTime">
             {(fields, { add, remove }) => (
               <>
                 {fields.map((field) => (
@@ -110,20 +158,41 @@ const ScheduleForm = (props) => {
                         {() => (
                           <Form.Item
                             {...field}
-                            name={[field.name, "sight"]}
-                            fieldKey={[field.fieldKey, "sight"]}
+                            name={[field.name, "weekday"]}
+                            fieldKey={[field.fieldKey, "weekday"]}
                             rules={[
-                              { required: true, message: "Missing sight" },
+                              { required: true, message: "Missing weekday" },
                             ]}
                           >
-                            <Select disabled={false} style={{ width: 130 }}>
-                              {(sights[form.getFieldValue("area")] || []).map(
-                                (item) => (
-                                  <Option key={item} value={item}>
-                                    {item}
-                                  </Option>
-                                )
-                              )}
+                            <Select
+                              style={{ width: 130 }}
+                              onChange={(value, key) => {
+                                // console.log(value);
+                                // setClassWeekDays((e) => {
+                                //   console.log(e);
+                                //   return { ...weekDays, [value]: true };
+                                // });
+                                // console.log(weekDays);
+                                  console.log(value);
+                                  console.log(key)
+                                // if (selectedDay.includes(value.labelInValue)) {
+                                //   delete selectedDay[value.item],
+                                //     setSelectedDay([...selectedDay, value]);
+                                // } else {
+                                //   setSelectedDay([...selectedDay, value]);
+                                // }
+                              }}
+                            >
+                              {Object.keys(classWeekDays).map((item, index) => (
+                                <Option
+                                  key={index}
+                                  value={classWeekDays[item]}
+                                  disabled={selectedDay.includes(item)}
+                                >
+                                  {/* {classWeekDays[item]} */}
+                                  {classWeekDays[item]}
+                                </Option>
+                              ))}
                             </Select>
                           </Form.Item>
                         )}
@@ -132,11 +201,12 @@ const ScheduleForm = (props) => {
                     <Col span={12}>
                       <Form.Item
                         {...field}
-                        name={[field.name, "price"]}
-                        fieldKey={[field.fieldKey, "price"]}
-                        rules={[{ required: true, message: "Missing price" }]}
+                        name={[field.name, "time"]}
+                        fieldKey={[field.fieldKey, "time"]}
+                        // normalize={(value) => moment(value).format("HH:mm:ss")}
+                        rules={[{ required: true, message: "Missing time" }]}
                       >
-                        <Input />
+                        <TimePicker style={{ width: "100%" }} />
                       </Form.Item>
                     </Col>
                     <Col span={2}>
@@ -165,7 +235,7 @@ const ScheduleForm = (props) => {
       </Row>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          Submit
+          {!!props.scheduleInfo ? "Update" : "Submit"}
         </Button>
       </Form.Item>
     </Form>

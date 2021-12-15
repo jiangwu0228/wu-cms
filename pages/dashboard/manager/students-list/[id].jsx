@@ -46,7 +46,7 @@ const StudentId = (studentId) => {
   useEffect(() => {
     (async () => {
       const res = await getStudent(id);
-      if (res) {
+      if (!!res) {
         const info = [
           {label: 'Name', value: res.name},
           {label: 'Age', value: res.age},

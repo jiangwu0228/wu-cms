@@ -2,6 +2,7 @@ import storage from "../../lib/services/storage";
 import axios from "axios";
 import { message } from "antd";
 import { AES } from "crypto-js";
+import moment from "moment";
 
 const axiosInstance = axios.create({
   baseURL: "http://cms.chtoma.com/api",
@@ -38,7 +39,7 @@ axiosInstance.interceptors.response.use(
     const msg = err.response.data.message;
     const code = err.response.data.statusCode;
     message.error(msg);
-    return Promise.reject({ meg, code });
+    return Promise.reject({ msg, code });
   }
 );
 
@@ -211,7 +212,7 @@ export const addCourse = async (values) => {
       teacherId: values.teacherId,
       type: values.type,
       uid: values.uid,
-      startTime: values.startTime,
+      startTime: values.startTime.format("YYYY-MM-DD"),
       price: values.price,
       maxStudents: values.maxStudents,
       duration: values.duration,
@@ -224,11 +225,11 @@ export const addCourse = async (values) => {
   } catch (err) {
     errorHandler(err);
   }
-}
+};
 
 export const editSchedule = async (values) => {
   try {
-    const res = await axiosInstance.put("/schedule", {
+    const res = await axiosInstance.put("/courses/schedule", {
       chapters: values.chapters,
       classTime: values.classTime,
       scheduleId: values.scheduleId,
@@ -239,7 +240,7 @@ export const editSchedule = async (values) => {
   } catch (err) {
     errorHandler(err);
   }
-}
+};
 
 export const editCourse = async (values) => {
   try {
@@ -249,7 +250,7 @@ export const editCourse = async (values) => {
       teacherId: values.teacherId,
       type: values.type,
       uid: values.uid,
-      startTime: values.startTime,
+      startTime: values.startTime.format("YYYY-MM-DD"),
       price: values.price,
       maxStudents: values.maxStudents,
       duration: values.duration,
@@ -262,4 +263,46 @@ export const editCourse = async (values) => {
   } catch (err) {
     errorHandler(err);
   }
+};
+
+export const getOverView = async () => {
+  try {
+    const res = await axiosInstance.get("/statistics/overview");
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const getMainStudent = async () => {
+  try {
+    const res = await axiosInstance.get("/statistics/student");
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+};
+
+export const getMainTeacher = async () => {
+  try {
+    const res = await axiosInstance.get("/statistics/teacher");
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
 }
+
+export const getMainCourse = async () => {
+  try {
+    const res = await axiosInstance.get("/statistics/course");
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+  }
+}
+
+export const getWorld = async () => {
+  return await axios.get(
+    'https://code.highcharts.com/mapdata/custom/world-palestine-highres.geo.json'
+  );
+};

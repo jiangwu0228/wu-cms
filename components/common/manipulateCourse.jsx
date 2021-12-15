@@ -20,12 +20,13 @@ import {
   getTeachers,
   getCourseTypes,
   getCourseCode,
+  addCourse,
+  editCourse,
 } from "../../pages/api/api-services";
 import { timeUnitMap, gutter } from "../../lib/constant/config";
 
 const { Item } = Form;
 const { TextArea } = Input;
-const { Dragger } = Upload;
 
 const DescriptionTextArea = styled(Form.Item)`
   .ant-form-item-control {
@@ -126,6 +127,8 @@ const CourseForm = (props) => {
       setCode(resCode);
       form.setFieldsValue({
         uid: resCode,
+        //this is probably not the best way to do this
+        // durationUnit: 2,
       });
     }
   }, []);
@@ -141,41 +144,19 @@ const CourseForm = (props) => {
     );
   };
 
-  const onFinishHandler =  (values) => {
-    console.log(values);
-    props.onClick()
-    // const {
-    //   uid,
-    //   name,
-    //   description,
-    //   type,
-    //   teacher,
-    //   startDate,
-    //   endDate,
-    //   price,
-    //   image,
-    // } = values;
-    // const data = {
-    //   uid,
-    //   name,
-    //   description,
-    //   type,
-    //   teacher,
-    //   startDate,
-    //   endDate,
-    //   price,
-    //   image,
-    // };
-    // const res = await props.onSubmit(data);
-    // if (res) {
-    //   props.onClose();
-    // }
+  const onFinishHandler = async (values) => {
+    const res = !!props.isAdd
+      ? await editCourse(values)
+      : await addCourse(values);
+    if (!!res) {
+      form.setFieldsValue({ id: res.id });
+      props.next(res);
+    }
   };
-
 
   return (
     <>
-      <Form layout="vertical" form={form} onFinish={onFinishHandler}>
+      <Form layout="vertical" form={form} onFinish={onFinishHandler} initialValues={{durationUnit:2}}>
         <Row gutter={gutter}>
           <Col span={8}>
             <Item
@@ -197,17 +178,14 @@ const CourseForm = (props) => {
                 >
                   <Select
                     placeholder="Select teacher"
-                    // notFoundContent={
-                    //   isTeacherSearching ? <Spin size="small" /> : null
-                    // }
+                    notFoundContent={null}
                     filterOption={false}
                     showSearch
                     // disabled={role !== Role.manager}
                     onSearch={async (query) => {
                       const res = await getTeachers(query);
                       if (!!res) {
-                        const data = res;
-                        setTeachers(data.teachers);
+                        setTeachers(res.teachers);
                       }
                     }}
                   >
@@ -236,9 +214,7 @@ const CourseForm = (props) => {
                   name="uid"
                   rules={[{ required: true }]}
                 >
-                  <Input type="text" disabled placeholder={code}>
-                    {/* {code} */}
-                  </Input>
+                  <Input type="text" disabled placeholder={code}></Input>
                 </Item>
               </Col>
             </Row>
@@ -246,9 +222,13 @@ const CourseForm = (props) => {
         </Row>
         <Row gutter={gutter}>
           <Col span={8}>
-            <Item label="Start Data">
+            <Item
+              label="Start Data"
+              name="startTime"
+              rules={[{ required: true }]}
+            >
               <DatePicker
-                format="YYYY-MM-DD"
+                value={moment().format("YYYY-MM-DD")}
                 disabledDate={(current) => {
                   // Can not select days before today and today
                   return current && current < moment().endOf("day");
@@ -282,12 +262,13 @@ const CourseForm = (props) => {
                   name="duration"
                   rules={[{ required: true }]}
                 >
-                  {/* <Input.Group compact> */}
                   <InputNumber min={1} max={10} style={{ width: "60%" }} />
                 </Item>
-                <Item name="durationUnit">
+                <Item name="durationUnit" >
                   <Select
-                    defaultValue={parseInt(timeUnitMap[2])}
+                    // defaultValue={timeUnitMap[2]}
+                    // initialValue={timeUnitMap[2]}
+                    // inputValue={timeUnitMap[2]}
                     style={{ width: "40%" }}
                   >
                     {Object.keys(timeUnitMap).map((unit) => (
@@ -296,7 +277,6 @@ const CourseForm = (props) => {
                       </Select.Option>
                     ))}
                   </Select>
-                  {/* </Input.Group> */}
                 </Item>
               </Col>
             </Row>
@@ -354,9 +334,15 @@ const CourseForm = (props) => {
         <Row gutter={gutter}>
           <Col span={8}>
             <Item>
-              <Button type="primary" htmlType="submit" >
-                Create Course
+              <Button type="primary" htmlType="submit" disabled={isUploading}>
+                {!!props.isAdd ? "Update Course" : "Create Course"}
               </Button>
+            </Item>
+          </Col>
+          {/* can't add this in via form.setFieldsValue */}
+          <Col style={{ display: "none" }}>
+            <Item label="id" name="id">
+              <InputNumber />
             </Item>
           </Col>
         </Row>

@@ -140,11 +140,17 @@ problems:
 1. add course tab use steps component 
 2. add manipulationCourse form component.
 
-//25 
-
-
 problems:
 1. delete teacher will show error.
 2. adjust textarea height will cover alert.
 3. dose error will re-render? 429 error?
 4. inputgroup disable the function of inner input.
+
+//14/ Dec 2021
+1. 6 component in overview tab, so build framework for that.
+2. write method to get data from server and wrap it in a useEffect.
+3. build single antd card component, and loop it as 3 card and inject data.
+4. same ad above component.
+
+problems:
+1. response data was undefined in first time.(fixed)(use && make sure that have data)
