@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styled from "styled-components";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import DashboardLayout from "../../../components/layout/dashboard/dashboardLayout";
 import {
   DeploymentUnitOutlined,
@@ -19,41 +19,36 @@ import {
 } from "../../api/api-services";
 
 import OverViewCard from "../../../components/overview/overView";
+import PieChart from "../../../components/overview/pie";
+import LineChart from "../../../components/overview/line";
+import BarChart from "../../../components/overview/bar";
+import HeatChart from "../../../components/overview/heat";
 import DistributionCard from "../../../components/overview/distributionCard";
 
-const DistributionWithNoSSR = dynamic(() => import("../../../components/overview/distributionCard"), {
-  ssr: false,
-});
+const DistributionWithNoSSR = dynamic(
+  () => import("../../../components/overview/distributionCard"),
+  {
+    ssr: false,
+  }
+);
 
 export default function managerIndex() {
   const [overviewData, setOverviewData] = useState(null);
   const [mainCourse, setMainCourse] = useState(null);
   const [mainStudent, setMainStudent] = useState(null);
   const [mainTeacher, setMainTeacher] = useState(null);
-  const [distributionRole, setDistributionRole] = useState('student');
+  const [distributionRole, setDistributionRole] = useState("student");
   const [world, setWorld] = useState(null);
+  const [selectedType, setSelectedType] = useState("studentType");
 
-  useEffect(async () => {
-    const resOverView = await getOverView();
-    if (!!resOverView) {
-      setOverviewData(resOverView);
-    }
-    const resCourse = await getMainCourse();
-    if (!!resCourse) {
-      setMainCourse(resCourse);
-    }
-    const resStudent = await getMainStudent();
-    if (!!resStudent) {
-      setMainStudent(resStudent);
-    }
-    const resTeacher = await getMainTeacher();
-    if (!!resTeacher) {
-      setMainTeacher(resTeacher);
-    }
-    const resWorld = await getWorld();
-    if (!!resWorld) {
-      setWorld(resWorld);
-    }
+  useEffect(() => {
+    Promise.all([
+      getOverView().then(setOverviewData),
+      getMainCourse().then(setMainCourse),
+      getMainStudent().then(setMainStudent),
+      getMainTeacher().then(setMainTeacher),
+      getWorld().then(setWorld),
+    ]);
   }, []);
 
   const cardData = overviewData && [
@@ -77,11 +72,6 @@ export default function managerIndex() {
     },
   ];
 
-  // console.log(overviewData);
-  // console.table(mainCourse.classTime);
-  // console.log(mainStudent);
-  // console.log(mainTeacher);
-
   return (
     <DashboardLayout>
       {overviewData && (
@@ -98,25 +88,119 @@ export default function managerIndex() {
           ))}
         </Row>
       )}
-      {world && (<Row gutter={[24, 16]}>
+      {world && (
+        <Row gutter={[24, 16]}>
+          <Col span={12}>
+            <Card
+              title="Distribution"
+              extra={
+                <Select
+                  defaultValue="student"
+                  bordered={false}
+                  onSelect={setDistributionRole}
+                >
+                  <Select.Option value="student">Student</Select.Option>
+                  <Select.Option value="teacher">Teacher</Select.Option>
+                </Select>
+              }
+            >
+              <DistributionWithNoSSR
+                data={
+                  distributionRole === "student"
+                    ? mainStudent?.country
+                    : mainTeacher?.country
+                }
+                world={world}
+                title={distributionRole}
+              />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card
+              title="Types"
+              extra={
+                <Select
+                  defaultValue={selectedType}
+                  bordered={false}
+                  onSelect={setSelectedType}
+                >
+                  <Select.Option value="studentType">
+                    Student Type
+                  </Select.Option>
+                  <Select.Option value="courseType">Course Type</Select.Option>
+                  <Select.Option value="gender">Gender</Select.Option>
+                </Select>
+              }
+            >
+              {selectedType === "studentType" ? (
+                <PieChart data={mainStudent?.type} title={selectedType} />
+              ) : selectedType === "courseType" ? (
+                <PieChart data={mainCourse?.type} title={selectedType} />
+              ) : (
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <PieChart
+                      data={Object.entries(overviewData?.student.gender).map(
+                        ([name, amount]) => ({
+                          name,
+                          amount,
+                        })
+                      )}
+                      title="student gender"
+                    />
+                  </Col>
+
+                  <Col span={12}>
+                    <PieChart
+                      data={Object.entries(overviewData?.teacher.gender).map(
+                        ([name, amount]) => ({
+                          name,
+                          amount,
+                        })
+                      )}
+                      title="teacher gender"
+                    />
+                  </Col>
+                </Row>
+              )}
+            </Card>
+          </Col>
+        </Row>
+      )}
+      <Row gutter={[24, 16]}>
         <Col span={12}>
-          <Card
-            title="Distribution"
-            extra={
-              <Select defaultValue="student" bordered={false} onSelect={setDistributionRole}>
-                <Select.Option value='student'>Student</Select.Option>
-                <Select.Option value='teacher'>Teacher</Select.Option>
-              </Select>
-            }
-          >
-            <DistributionWithNoSSR 
-            data={distributionRole === 'student' ? mainStudent.country : mainTeacher.country}
-            world={world}
-            title={distributionRole}
+          <Card title="Increment">
+            <LineChart
+              data={{
+                student: mainStudent?.createdAt,
+                teacher: mainTeacher?.createdAt,
+                course: mainCourse?.createdAt,
+              }}
             />
           </Card>
         </Col>
-      </Row>)}
+
+        <Col span={12}>
+          <Card title="Languages">
+            <BarChart
+              data={{
+                interest: mainStudent?.interest,
+                teacher: mainTeacher?.skills,
+              }}
+            />
+          </Card>
+        </Col>
+      </Row>
+      <Row gutter={[24, 16]}>
+        <Col span={24}>
+          <Card title="Course Schedule">
+            <HeatChart
+              data={mainCourse?.classTime}
+              title="Course schedule per weekday"
+            />
+          </Card>
+        </Col>
+      </Row>
     </DashboardLayout>
   );
 }

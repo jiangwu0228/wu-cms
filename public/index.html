@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <script src="https://unpkg.com/react@16.3.2/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@16.3.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js" charset="utf-8"></script>
+    <script type="text/babel">
+        // React is loaded and is available as React and ReactDOM
+        // imports should NOT be used
+        const FocusableInput = (props) => {
+            // Write your code here
+            return (
+                <input type="text" onFocus={props.onFocus} />
+            );
+            // return <input />;
+        };
+
+        document.body.innerHTML = "<div id='root' />";
+        ReactDOM.render(<FocusableInput shouldFocus={true} />, document.getElementById("root"));
+        setTimeout(() => console.log(document.getElementById("root").innerHTML));
+    </script>
+    <div id="root"></div>
+</body>
+
+</html>

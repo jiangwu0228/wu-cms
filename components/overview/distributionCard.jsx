@@ -1,16 +1,10 @@
 import Highcharts from "highcharts/highmaps";
 import HighchartsReact from "highcharts-react-official";
-import { useState, useEffect } from "react";
-import { getWorld } from "../../pages/api/api-services";
 
 const DistributionCard = (props) => {
   const { data, title, world } = props;
-  // console.log("data", data);
-  // console.log(title);
-  // console.log("world", world);
 
-  const mapSource = data.map((item) => {
-    // console.log("item", item.name);
+  const mapSource = data?.map((item) => {
     const target = world.data.features.find(
       (feature) =>
         item.name.toLowerCase() === feature.properties.name.toLowerCase()
@@ -29,7 +23,12 @@ const DistributionCard = (props) => {
       min: 0,
       stops: [
         [0, "#fff"],
-        [0.5, Highcharts.getOptions().colors[0]],
+        [
+          0.5,
+          typeof Highcharts === "object"
+            ? Highcharts.getOptions().colors[0]
+            : "",
+        ],
         [1, "#1890ff"],
       ],
     },
@@ -49,22 +48,19 @@ const DistributionCard = (props) => {
         .split(/(?=[A-Z])/)
         .join(" ")}</span>`,
     },
-    // chart: {
-    //   map: 'custom/world',
-    // },
-    series: {
-      data: mapSource,
-      mapData: world.data,
-      name: "Total",
-      states: {
-        hover: {
-          color: "#a4edba",
+    series: [
+      {
+        data: mapSource,
+        mapData: world.data,
+        name: "Total",
+        states: {
+          hover: {
+            color: "#a4edba",
+          },
         },
       },
-    },
+    ],
   };
-
-  // console.log("options", options);
 
   return (
     <HighchartsReact
