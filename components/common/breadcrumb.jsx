@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import React from "react";
 
 import { Breadcrumb } from "antd";
+import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
+import useGetCrumbByPath from "../../lib/hooks/getBreadCrumb";
 
 // const BreadCrumb = () => {
 //   const routes = [
@@ -46,18 +48,24 @@ import { Breadcrumb } from "antd";
 //   return <Breadcrumb itemRender={itemRender} routes={routes} />;
 // };
 
-const BreadCrumb = () => {
-  const router = useRouter();
-  const path = router.pathname;
-  const pathArr = path.split("/");
-  const root = pathArr.slice(2, 3).join("/");
+const BreadCrumb = (props) => {
+  // const router = useRouter();
+  // const path = router.pathname;
+  // const pathArr = path.split("/");
+  // const root = pathArr.slice(2, 3).join("/");
+  const crumbLinkList = props.crumbLinkList;
 
   return (
-    <Breadcrumb style={{ margin: "16px 16px 0" }}>
-      <Breadcrumb.Item>
-        <Link href={root}>{"CMS " + root.toLocaleUpperCase() + " SYSTEM"}</Link>
-      </Breadcrumb.Item>
-
+    <Breadcrumb style={{ margin: '0 16px', padding: 16 }}>
+      {crumbLinkList.map((item, index) =>
+        item.isLink ? (
+          <BreadcrumbItem key={index} href={item.href}>
+            {item.value}
+          </BreadcrumbItem>
+        ) : (
+          <BreadcrumbItem key={index}>{item.value}</BreadcrumbItem>
+        )
+      )}
     </Breadcrumb>
   );
 };

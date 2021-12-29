@@ -3,10 +3,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import storage from "../../../lib/services/storage";
-import {logout}  from "../../../pages/api/api-services";
+import { logout } from "../../../pages/api/api-services";
 
 import styled from "styled-components";
-import { managerMenuConfig } from "../../../lib/config/menuConfig";
+import {
+  managerMenuConfig,
+  studentMenuConfig,
+  teacherMenuConfig,
+} from "../../../lib/config/menuConfig";
+import useGetCrumbByPath from "../../../lib/hooks/getBreadCrumb";
 
 import "antd/dist/antd.css";
 import { Layout, Menu, Avatar, Badge, Popover, Breadcrumb } from "antd";
@@ -56,7 +61,7 @@ const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const getMenuConfig = (menu) => {
-  const baseUrl = "/dashboard/manager";
+  const baseUrl = `/dashboard/${storage.role}`;
   return menu.map((item) => {
     if (item.children) {
       return (
@@ -74,19 +79,40 @@ const getMenuConfig = (menu) => {
   });
 };
 
+const getDefaultNavKeys = (crumbLinkList) => {
+  const activeNavList = crumbLinkList.map((item) => item.value);
+  if (activeNavList[activeNavList.length - 1] === "Detail") {
+    activeNavList.pop();
+  }
+  const defaultSelectedKeys = activeNavList.slice(-1);
+  const defaultOpenKeys = activeNavList.slice(1, -1);
+  return { defaultSelectedKeys, defaultOpenKeys };
+};
+
 // const menu = getMenuConfig(managerMenuConfig);
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const [collapsed, toggleCollapse] = useState(false);
+  const crumbLinkList = useGetCrumbByPath();
+  const { defaultSelectedKeys, defaultOpenKeys } =
+    getDefaultNavKeys(crumbLinkList);
+
   const toggle = () => {
     toggleCollapse(!collapsed);
   };
 
+  const menuConfig =
+    storage.role === "manager"
+      ? managerMenuConfig
+      : storage.role === "student"
+      ? studentMenuConfig
+      : teacherMenuConfig;
+
   //logout
-  const logoutRequest = async() => {
-    const res =  await logout();
-    if (res.code == 201) {
+  const logoutRequest = async () => {
+    const res = await logout();
+    if (!!res) {
       storage.deleteUserInfo();
       router.push("/login");
     }
@@ -121,8 +147,13 @@ const DashboardLayout = ({ children }) => {
           </Link>
         </Logo>
 
-        <Menu theme="dark" defaultSelectedKeys={["overview"]} mode="inline">
-          {getMenuConfig(managerMenuConfig)}
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={defaultSelectedKeys}
+          defaultOpenKeys={defaultOpenKeys}
+          mode="inline"
+        >
+          {getMenuConfig(menuConfig)}
         </Menu>
       </Sider>
 
@@ -163,7 +194,7 @@ const DashboardLayout = ({ children }) => {
           </HeaderRight>
         </Header>
         {/* bread crumb nav*/}
-            <BreadCrumb></BreadCrumb>
+        <BreadCrumb crumbLinkList={crumbLinkList} />
         {/* content */}
         <Content
           className="site-layout-background"
