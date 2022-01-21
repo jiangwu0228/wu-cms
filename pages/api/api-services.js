@@ -241,7 +241,7 @@ export const editSchedule = async (values) => {
     errorHandler(err);
   }
 };
-
+666
 export const editCourse = async (values) => {
   try {
     const res = await axiosInstance.put("/courses", {

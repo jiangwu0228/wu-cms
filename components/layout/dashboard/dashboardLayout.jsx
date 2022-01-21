@@ -12,6 +12,7 @@ import {
   teacherMenuConfig,
 } from "../../../lib/config/menuConfig";
 import useGetCrumbByPath from "../../../lib/hooks/getBreadCrumb";
+import { MessagePanel } from "../../common/message";
 
 import "antd/dist/antd.css";
 import { Layout, Menu, Avatar, Badge, Popover, Breadcrumb } from "antd";
@@ -54,6 +55,12 @@ const HeaderIcon = styled.div`
   &:hover {
     color: #1890ff;
   }
+`;
+
+const MessageContainer = styled.div`
+  height: 380px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 //layout
@@ -176,14 +183,15 @@ const DashboardLayout = ({ children }) => {
           </HeaderIcon>
           {/* notification and profile */}
           <HeaderRight>
-            <Badge size="small" count={24} offset={[13, 0]} style={{}}>
+            {/* <Badge size="small" count={24} offset={[13, 0]} style={{}}>
               <BellOutlined
                 style={{
                   color: "#fff",
                   fontSize: "24px",
                 }}
               />
-            </Badge>
+            </Badge> */}
+            {/* <MessagePanel /> */}
 
             <Popover placement="bottomRight" content={logoutLabel}>
               <Avatar

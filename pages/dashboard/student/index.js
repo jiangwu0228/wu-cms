@@ -1,5 +1,6 @@
 import Head from "next/head";
 import styled from "styled-components";
+import DashboardLayout from "../../../components/layout/dashboard/dashboardLayout";
 
 const Main = styled.div`
   height: 90vh;
@@ -17,55 +18,12 @@ const Heading = styled.h1`
 
 export default function Login() {
   return (
-    <>
+    <DashboardLayout>
       <Head>
         <title>Student Dashboard</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-      <div>Student Dashboard Works!</div>
-    </>
+    </DashboardLayout>
   );
 }

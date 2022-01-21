@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 const LineChart = (props) => {
   const { data } = props;
-  console.log(props);
   
   const [options, setOptions] = useState({
     title: {
